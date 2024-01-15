@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import {cookies} from 'next/headers'
 import { IUser } from "@/lib/types";
 import { revalidatePath } from "next/cache";
-import { StringExpressionOperatorReturningArray } from "mongoose";
+
 import Post from "@/lib/db/models/post.models";
 
 export const createUser = async (user: IUser) => {

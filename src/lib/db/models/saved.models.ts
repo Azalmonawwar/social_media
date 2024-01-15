@@ -2,7 +2,7 @@ import { Schema,model,models,Document } from "mongoose";
 
 export interface ISaved extends Document{
     user:string;
-    post:string;
+    post:string[];
     createdAt:Date;
 }
 
@@ -11,10 +11,12 @@ const SavedSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"User",
     },
-    post:{
-        type:Schema.Types.ObjectId,
-        ref:"Post",
-    },
+    post:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Post",
+        },
+    ],
     createdAt:{
         type:Date,
         default:Date.now,

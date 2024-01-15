@@ -3,6 +3,7 @@ import Post from "@/lib/db/models/post.models"
 import User from "@/lib/db/models/user.models"
 import { IPost } from "@/lib/types"
 import { connectToDatabase } from "@/lib/db/connect"
+import Comment from "@/lib/db/models/comment.models"
 
 
 //create a post 
@@ -355,12 +356,15 @@ export async function createCommentByPostId (postId:string,userId:string,comment
             return JSON.parse(JSON.stringify(response))
         }
 
-        const newComment = {
-            user:userId,
+        const newComment = await Comment.create({
             text:comment,
-        }
+            user:userId,
+            post:postId
+        })
 
-        post.comments.unshift(newComment)
+
+        userExists.comments.push(newComment._id)
+        post.comments.push(newComment._id);
         await post.save()
         const response = {
             status:200,
@@ -379,8 +383,76 @@ export async function createCommentByPostId (postId:string,userId:string,comment
     }
 }
 
+//reply to comment by post id with userid and comment id
+export async function replyToCommentByPostId (postId:string,userId:string,commentId:string,reply:string){
+    try {
+        await connectToDatabase()
+        if(!userId){
+            const response = {
+                status:400,
+                message:"User Id is required"
+            }
+            return JSON.parse(JSON.stringify(response))
+        }
 
-//delete comment by post id with userid
+        //check if user exists
+
+        const userExists = await User.findById(userId)
+        if(!userExists){
+            const response = {
+                status:400,
+                message:"User does not exist"
+            }
+            return JSON.parse(JSON.stringify(response))
+        }
+
+        const post = await Post.findById(postId)
+        if(!post){
+            const response = {
+                status:400,
+                message:"Post does not exist"
+            }
+            return JSON.parse(JSON.stringify(response))
+        }
+
+        const comment = await Comment.findById(commentId)
+        if(!comment){
+            const response = {
+                status:400,
+                message:"Comment does not exist"
+            }
+            return JSON.parse(JSON.stringify(response))
+        }
+
+        const newComment = {
+            text:reply,
+            user:userId,
+            post:postId
+        }
+
+        const replyComment = await Comment.create(newComment)
+        comment.replies.push(replyComment._id)
+        
+        await comment.save()
+        const response = {
+            status:200,
+            message:"Comment replied successfully",
+            data:comment.replies
+        }
+        return JSON.parse(JSON.stringify(response))
+
+    }
+    catch (error:any) {
+        const response = {
+            status:400,
+            message:error.message
+        }
+        return JSON.parse(JSON.stringify(response))
+
+    }
+}
+
+//delete comment by post id with userid and comment id
 export async function deleteCommentByPostId (postId:string,userId:string,commentId:string){
     try {
         await connectToDatabase()
@@ -412,7 +484,7 @@ export async function deleteCommentByPostId (postId:string,userId:string,comment
             return JSON.parse(JSON.stringify(response))
         }
 
-        const comment = post.comments.find(comment =>comment.id === commentId)
+        const comment = await Comment.findById(commentId)
         if(!comment){
             const response = {
                 status:400,
@@ -429,9 +501,11 @@ export async function deleteCommentByPostId (postId:string,userId:string,comment
             return JSON.parse(JSON.stringify(response))
         }
 
-        const removeIndex = post.comments.map(comment=>comment.user.toString()).indexOf(userId)
+        const removeIndex = post.comments.map(comment=>comment.toString()).indexOf(commentId)
         post.comments.splice(removeIndex,1)
         await post.save()
+        await comment.remove()
+        await userExists.comments.remove(commentId)
         const response = {
             status:200,
             message:"Comment deleted successfully",
@@ -570,6 +644,10 @@ export async function likePostByPostId (postId:string,userId:string){
 
 //     }
 // }
+
+
+
+
 
 
 
