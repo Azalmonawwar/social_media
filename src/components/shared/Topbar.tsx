@@ -1,18 +1,21 @@
+
 import Link from 'next/link'
 import React from 'react'
 import { Button } from '../ui/button'
 import Image from 'next/image'
 
 const TopBar = () => {
+ 
   return (
     <section className=" sticky top-0 z-50 md:hidden bg-dark-1 w-full">
     <div className="flex justify-between py-4 px-5">
       <Link href="/" className="flex gap-3 items-center">
         <Image
-          src="/icons/home.svg"
+          src="/icons/logo.png"
           alt="logo"
-          width={24}
-          height={24}
+          width={125}
+          height={85}
+          className='invert'
         />
       </Link>
 

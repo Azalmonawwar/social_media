@@ -5,8 +5,8 @@ import '../globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'sdfdsfsd',
-  description: 'dsfsfds app',
+  title: 'MetaGram',
+  description: 'MetaGram is a social media platform for sharing photos and videos with friends and family.',
 }
 
 export default function RootLayout({
@@ -16,7 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+      <section className="flex flex-col items-center justify-start sm:justify-center  h-screen py-[10px] sm:py-24">
+        {children}
+      </section>
+        </body>
     </html>
   )
 }
