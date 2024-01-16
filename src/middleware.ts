@@ -5,7 +5,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  const isPublicPath = path === "/login" || path === "/signup";
+  const isPublicPath = path === "/login" || path === "/signup" || path === "/reset-password" || path === "/forgotpassword";
 
   const token = request.cookies.get("token")?.value || "";
 
@@ -32,5 +32,5 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/profile", "/login", "/signup","/"],
+  matcher: ["/","/login","/signup","/onboarding","/profile","/explore"],
 };

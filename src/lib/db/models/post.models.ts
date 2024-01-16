@@ -6,6 +6,7 @@ export interface IPost extends Document {
     caption: string;
     image: string;
     location: string;
+    tags:string;
     likes: string[];
     comments: string[];
     createdAt: Date;
@@ -25,6 +26,9 @@ const PostSchema = new Schema({
         required: true,
     },
     location: {
+        type: String,
+    },
+    tags: {
         type: String,
     },
     likes: [

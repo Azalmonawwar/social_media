@@ -5,7 +5,7 @@ const Container = (
         { children: React.ReactNode }
 ) => {
   return (
-    <section className=' flex flex-col flex-1 items-center gap-10  py-10 px-5 md:px-8 lg:p-14 '>{children}</section>
+    <section className=' flex flex-col items-start gap-10  py-10 px-5 md:px-8 lg:ml-[270px] md:ml-[100px] '>{children}</section>
   )
 }
 

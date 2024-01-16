@@ -7,11 +7,11 @@ import jwt from "jsonwebtoken";
 import {cookies} from 'next/headers'
 import { IUser } from "@/lib/types";
 import { revalidatePath } from "next/cache";
-
+import nodemailer from 'nodemailer'
 import Post from "@/lib/db/models/post.models";
 import { LoginValidation, SignupValidation } from "../validations";
 import { sendMail } from "../utils/sendVerficationMail";
-
+import bcrypt from "bcryptjs";
 export const createUser = async (user: z.infer<typeof SignupValidation>) => {
   try {
     await connectToDatabase();
@@ -314,9 +314,8 @@ export const getUserByToken = async () => {
 
 
 //logout user
-export const logoutUser = async () => {
+export const logoutUser = () => {
   try {
-    await connectToDatabase();
     // check if token is provided
     cookies().delete('token');
 
@@ -453,7 +452,153 @@ export const updateUser = async (user: IUser) => {
   }
 };
 
+//send reset password link
+export const sendResetPasswordLink = async (email: string) => {
+  try {
+    await connectToDatabase();
+    // check if email is provided
+    if (!email) {
+      const response = {
+        status: false,
+        message: "Please provide email",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
 
+    // check if user exists
+    const existingUser = await User.findOne({ email });
+
+    if (!existingUser) {
+      const response = {
+        status: false,
+        message: "User does not exists",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+    
+    const token = existingUser.resetToken;
+
+    //send reset password mail
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: 'todaytalks3@gmail.com',
+        pass:process.env.PASSWORD,
+      },
+    });
+
+    const mailOption = {
+      from: 'todaytalks3@gmail.com',
+      to: email,
+      subject: "Thank you for your message",
+      html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5;">
+      <h2 style="color: #333;">Email Verification</h2>
+      <p>Dear User,</p>
+      <a href=${`http://localhost:3000/reset-password?token=${token}`}>Click here to reset password</a>
+      
+      <p>Thank you for using our service.</p>
+      <div style="padding: 10px; background-color: #d3d3d3; margin-top: 20px;">
+        <small>This is an automated email. Please do not reply.</small>
+      </div>
+    </div>
+  `
+  }
+
+    // return saved user
+    const res = await transporter.sendMail(mailOption)
+    const response = {
+      status: true,
+      message: "Reset password link sent successfully",
+      data: res,
+    };
+    return JSON.parse(JSON.stringify(response));
+  } catch (error: any) {
+    console.log(error);
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+};
+
+//reset password
+export const resetPassword = async (password: string, token: string) => {
+  try {
+    await connectToDatabase();
+    // check if token is provided
+    if (!token) {
+      const response = {
+        status: false,
+        message: "Please provide token",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    
+    // check if user exists
+    const existingUser = await User.findOne({ resetToken: token });
+
+    
+
+
+    if (!existingUser) {
+      const response = {
+        status: false,
+        message: "User does not exists",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+    // check if token is expired
+    if (existingUser.resetTokenExpiry < Date.now()) {
+      const response = {
+        status: false,
+        message: "Token expired",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    //generate new token for reset password
+    const newResetToken = jwt.sign({
+      id: token,
+    }, process.env.JWT_SECRET as string, {
+      expiresIn: "365d",
+    });
+
+    // update user
+    const updatedUser = await User.findByIdAndUpdate(
+      existingUser._id,
+      { password:hashedPassword, resetToken: newResetToken, resetTokenExpiry: Date.now() },
+      { new: true }
+    );
+
+    // if user is not updated
+    if (!updatedUser) {
+      const response = {
+        status: false,
+        message: "User not updated",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    // return updated user
+    const response = {
+      status: true,
+      message: "Password reset successfully",
+      data: updatedUser,
+    };
+    return JSON.parse(JSON.stringify(response));
+  } catch (error: any) {
+    console.log(error);
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+};
 //delete user
 
 export const deleteUser = async (id: string) => {

@@ -4,10 +4,11 @@ import User from "@/lib/db/models/user.models"
 import { IPost } from "@/lib/types"
 import { connectToDatabase } from "@/lib/db/connect"
 import Comment from "@/lib/db/models/comment.models"
+import { revalidatePath } from "next/cache"
 
 
 //create a post 
-export async function createPost (userId:string,post:IPost){
+export async function createPost (userId:string,post:{caption:string,image:string,tags:string,location:string}){
     try {
         await connectToDatabase()
         if(!userId){
@@ -20,7 +21,7 @@ export async function createPost (userId:string,post:IPost){
 
         //check if user exists
 
-        const userExists = await User.findById(userId)
+        const userExists = await User.findById({_id:userId})
         if(!userExists){
             const response = {
                 status:400,
@@ -39,15 +40,23 @@ export async function createPost (userId:string,post:IPost){
 
         //create post 
         const newPost = await Post.create({
-            ...post,
+            caption:post.caption,
+            image:post.image,
+            tags:post.tags,
+            location:post.location,
             user:userId
         })
+        
 
+        //add post to user posts
+        userExists.posts.push(newPost._id)
+        await userExists.save()
         const response = {
             status:200,
             message:"Post created successfully",
             data:newPost
         }
+        revalidatePath('/')
         return JSON.parse(JSON.stringify(response))
 
     } catch (error:any) {
@@ -63,7 +72,7 @@ export async function createPost (userId:string,post:IPost){
 export async function getAllPosts (){
     try {
         await connectToDatabase()
-        const posts = await Post.find().sort({createdAt:-1})
+        const posts = await Post.find().populate({path:'user' ,model:"User"}).sort({createdAt:-1})
         const response = {
             status:200,
             message:"Posts fetched successfully",

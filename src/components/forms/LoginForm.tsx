@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import {  LoginValidation } from "@/lib/validations";
 import { loginUser } from "@/lib/actions/user.action";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 const LoginForm = () => {
     const form = useForm<z.infer<typeof LoginValidation>>({
         resolver: zodResolver(LoginValidation),
@@ -40,7 +41,7 @@ const LoginForm = () => {
     return (
         <Form {...form}>
             <div className="sm:w-420 flex-center flex-col">
-                <h2 className="h3-bold md:h2-bold pt-5 md:pt-8 text-center">
+                <h2 className=" pt-5 md:pt-8 text-center">
                     Login into Your Account
                 </h2>
                 {
@@ -88,7 +89,7 @@ const LoginForm = () => {
 
                     </Button>
 
-                    
+                    <Link href='/forgotpassword'>Forget Password ? </Link>
                 </form>
             </div>
         </Form>
