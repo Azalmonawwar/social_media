@@ -14,7 +14,7 @@ export const connectToDatabase = async () => {
   cached.promise =
     cached.promise ||
     mongoose.connect(MONGODB_URL, {
-      dbName: "social-media-app",
+      dbName: "social-media",
       bufferCommands: false,
     });
 

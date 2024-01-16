@@ -211,7 +211,7 @@ export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
     if (!isMatch) {
       const response = {
         status: false,
-        message: "Password is incorrect",
+        message: "Invalid credentials",
       };
       return JSON.parse(JSON.stringify(response));
     }
@@ -220,7 +220,7 @@ export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
     if (!existingUser.isVerified) {
       const response = {
         status: false,
-        message: "User not verified",
+        message: "Please verify your email",
       };
       return JSON.parse(JSON.stringify(response));
     }
@@ -336,11 +336,11 @@ export const logoutUser = async () => {
 };
 
 //onboarding user
-export const onboardingUser = async (user: IUser,path:string) => {
+export const onboardingUser = async (user: any,path:string) => {
   try {
     await connectToDatabase();
     // check if all required fields are provided
-    if (!user.name || !user.username || !user.email || !user.phone) {
+    if (  !user.email ) {
       const response = {
         status: false,
         message: "Please provide all required fields",
@@ -349,9 +349,9 @@ export const onboardingUser = async (user: IUser,path:string) => {
     }
 
     // check if user exists
-    const existingUser = await User.findOne({
-      $or: [{ email: user.email }, { phone: user.phone }],
-    });
+    const existingUser = await User.findOne(
+      { email: user.email }
+    );
 
     if (!existingUser) {
       const response = {
@@ -410,7 +410,7 @@ export const updateUser = async (user: IUser) => {
 
     // check if user exists
     const existingUser = await User.findOne({
-      $or: [{ email: user.email }, { phone: user.phone }],
+     email: user.email 
     });
 
     if (!existingUser) {

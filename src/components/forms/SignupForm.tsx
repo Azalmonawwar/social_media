@@ -23,6 +23,7 @@ const SignupForm = () => {
     const handleSignup = async (data: z.infer<typeof SignupValidation>) => {
         try {
             const response = await createUser(data);
+            console.log(response)
             setMessage(response.message)
             form.reset()
         } catch (error:any) {

@@ -17,15 +17,22 @@ const LoginForm = () => {
             password: "",
         },
     });
+    const [message, setMessage] = React.useState<string>("");
     const router = useRouter();
     const handleLogin = async (data: z.infer<typeof LoginValidation>) => {
         try {
             const response = await loginUser(data)
-            if (!response?.data?.onboarding) {
-                console.log(response?.data?.onboarding)
-                router.push('/onboarding')
+            if(response?.status){
+                if(response?.data?.onboarding){
+                    router.push('/')
+                }else{
+                    console.log(response.data)
+                    router.push('/onboarding')
+                }
             }
-            // router.push('/')
+            else{
+                setMessage(response.message)
+            }
         } catch (error:any) {
             console.log(error.message)
         }
@@ -36,7 +43,13 @@ const LoginForm = () => {
                 <h2 className="h3-bold md:h2-bold pt-5 md:pt-8 text-center">
                     Login into Your Account
                 </h2>
-
+                {
+                    message && (
+                        <div className="bg-red-500 text-white p-2 rounded-md mt-2">
+                            {message}
+                        </div>
+                    )
+                }
                 <form
                     onSubmit={form.handleSubmit(handleLogin)}
                     className="flex flex-col gap-5 w-full mt-4">

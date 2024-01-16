@@ -7,7 +7,6 @@ export interface IUser extends Document {
   name: string;
   username: string;
   email: string;
-  phone: string;
   password: string;
   avatar: string | null;
   followers: string[];
@@ -46,11 +45,7 @@ const UserSchema = new Schema({
         unique: true,
         toLowerCase: true,
     },
-    phone: {
-        type: String,
-        trim: true,
-        unique: true,
-    },
+    
     password: {
         type: String,
         required: [true, "Please provide a password"],
