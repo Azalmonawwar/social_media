@@ -1,6 +1,6 @@
 "use server";
 // Path: src/actions/user.action.ts
-
+import * as z from "zod";
 import User from "@/lib/db/models/user.models";
 import { connectToDatabase } from "@/lib/db/connect";
 import jwt from "jsonwebtoken";
@@ -9,8 +9,10 @@ import { IUser } from "@/lib/types";
 import { revalidatePath } from "next/cache";
 
 import Post from "@/lib/db/models/post.models";
+import { LoginValidation, SignupValidation } from "../validations";
+import { sendMail } from "../utils/sendVerficationMail";
 
-export const createUser = async (user: IUser) => {
+export const createUser = async (user: z.infer<typeof SignupValidation>) => {
   try {
     await connectToDatabase();
     // check if all required fields are provided
@@ -18,7 +20,7 @@ export const createUser = async (user: IUser) => {
       !user.name ||
       !user.username ||
       !user.password ||
-      (!user.email || !user.phone)
+      !user.email
     ) {
       const response = {
         status: false,
@@ -27,18 +29,18 @@ export const createUser = async (user: IUser) => {
       return JSON.parse(JSON.stringify(response));
     }
     // check if user enter email or phone number
-    if (!user.email && !user.phone) {
+    if (!user.email) {
       const response = {
         status: false,
-        message: "Please provide email or phone number",
+        message: "Please provide email ",
       };
       return JSON.parse(JSON.stringify(response));
     }
 
     // check if user already exists
-    const existingUser = await User.findOne({
-      $or: [{ email: user.email }, { phone: user.phone }],
-    });
+    const existingUser = await User.findOne(
+       { email: user.email }
+    );
 
     if (existingUser) {
       const response = {
@@ -49,8 +51,40 @@ export const createUser = async (user: IUser) => {
     }
 
     // create new user
-    const newUser = await User.create(user);
+    const newUser = new User(user);
 
+
+    //generate token for isverificationtoken
+    const verificationToken = jwt.sign({
+      id: newUser._id,
+    }
+    , process.env.JWT_SECRET as string, {
+      expiresIn: "30d",
+    });
+
+
+    //generate token for reset password
+    const resetToken = jwt.sign({
+      id: newUser._id,
+    }, process.env.JWT_SECRET as string, {
+      expiresIn: "365d",
+    });
+
+    // if token is not created
+    if (!verificationToken) {
+      const response = {
+        status: false,
+        message: "Token not created",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    //add token to user
+    newUser.verificationToken = verificationToken;
+    newUser.resetToken = resetToken;
+    newUser.resetTokenExpiry = Date.now() + 365 * 24 * 60 * 60 * 1000;
+    // save new user
+    const saveduser = await newUser.save();
     //check if user is created or not
     if (!newUser) {
       const response = {
@@ -59,12 +93,15 @@ export const createUser = async (user: IUser) => {
       };
       return JSON.parse(JSON.stringify(response));
     }
+    //send verification mail
+    const mail = await sendMail(saveduser.email,saveduser.name,verificationToken);
+    
 
     // return new user
     const response = {
       status: true,
-      message: "User created successfully",
-      data: newUser,
+      message: "Account created successfully, Please verify your email",
+      data: saveduser,
     };
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
@@ -77,16 +114,69 @@ export const createUser = async (user: IUser) => {
 };
 
 
+//verify user
+export const verifyUser = async (token: string) => {
+  try {
+    await connectToDatabase();
+    // check if token is provided
+    if (!token) {
+      const response = {
+        status: false,
+        message: "Please provide token",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    // check if user exists
+    const existingUser = await User.findOne({ verificationToken: token });
+
+    if (!existingUser) {
+      const response = {
+        status: false,
+        message: "User does not exists",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    // verify user
+    const verifiedUser = await User.findByIdAndUpdate(
+      existingUser._id,
+      { isVerified: true, verificationToken: "" },
+      { new: true }
+    );
+
+    // if user is not verified
+    if (!verifiedUser) {
+      const response = {
+        status: false,
+        message: "User not verified",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    // return verified user
+    const response = {
+      status: true,
+      message: "User verified successfully",
+      data: verifiedUser,
+    };
+    return JSON.parse(JSON.stringify(response));
+  } catch (error: any) {
+    console.log(error);
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+};
+
 //login user
-export const loginUser = async (user:{
-    email: string;
-    phone: string;
-    password: string;
-}) => {
+export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
   try {
     await connectToDatabase();
     // check if all required fields are provided
-    if (!user.password || (!user.email && !user.phone)) {
+    if (!user.password || !user.email ) {
       const response = {
         status: false,
         message: "Please provide all required fields",
@@ -94,7 +184,7 @@ export const loginUser = async (user:{
       return JSON.parse(JSON.stringify(response));
     }
     // check if user enter email or phone number
-    if (!user.email && !user.phone) {
+    if (!user.email) {
       const response = {
         status: false,
         message: "Please provide email or phone number",
@@ -104,7 +194,7 @@ export const loginUser = async (user:{
 
     // check if user exists
     const existingUser = await User.findOne({
-      $or: [{ email: user.email }, { phone: user.phone }],
+       email: user.email
     });
 
     if (!existingUser) {

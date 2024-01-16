@@ -7,6 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {  LoginValidation } from "@/lib/validations";
+import { loginUser } from "@/lib/actions/user.action";
+import { useRouter } from "next/navigation";
 const LoginForm = () => {
     const form = useForm<z.infer<typeof LoginValidation>>({
         resolver: zodResolver(LoginValidation),
@@ -15,9 +17,18 @@ const LoginForm = () => {
             password: "",
         },
     });
-
+    const router = useRouter();
     const handleLogin = async (data: z.infer<typeof LoginValidation>) => {
-        console.log(data);
+        try {
+            const response = await loginUser(data)
+            if (!response?.data?.onboarding) {
+                console.log(response?.data?.onboarding)
+                router.push('/onboarding')
+            }
+            // router.push('/')
+        } catch (error:any) {
+            console.log(error.message)
+        }
     };
     return (
         <Form {...form}>
