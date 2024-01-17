@@ -1,4 +1,5 @@
 export type IUser = {
+    _id: string;
     name: string;
     username: string;
     email: string | null;
@@ -18,8 +19,10 @@ export type IComment = {
 
 export type IPost = {
     user: IUser;
+    _id: string;
     caption: string;
     image: string;
+    tags: string;
     location: string;
     likes: IUser[];
     comments: IComment[];

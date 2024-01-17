@@ -10,7 +10,7 @@ import { redirect } from 'next/navigation';
 const PostForm =async () => {
   const {data} = await getUserByToken()
   const id = data._id
-
+  
   const create = async (formData: FormData) => {
     'use server'
     const pic = formData.get('image')
@@ -43,7 +43,7 @@ const PostForm =async () => {
         <label htmlFor="image">Image</label>
         <Input className='bg-dark-secondary text-white p-3 outline-none border-none rounded-md'  type="file" id="image" name='image' />
       </div>
-      <Button type="submit">Submit</Button>
+      <Button type="submit" className='bg-zinc-600'>Submit</Button>
     </form>
   )
 }

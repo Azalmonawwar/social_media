@@ -44,7 +44,7 @@ export async function uploadPic(file: any) {
           .end(buffer);
         } 
         );
-        return res?.url;
+        return res?.secure_url;
 }
 catch (error:any)  {
         console.log(error)

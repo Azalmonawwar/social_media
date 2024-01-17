@@ -334,6 +334,42 @@ export const logoutUser = () => {
   }
 };
 
+//get user by id
+
+export const getUserById=async(userId:string)=>{
+  try {
+    await connectToDatabase();
+    
+
+    // check if user exists
+    const existingUser = await User.findOne({
+        _id: userId
+    });
+
+    if (!existingUser) {
+      const response = {
+        status: false,
+        message: "User does not exists",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    // return existing user
+    const response = {
+      status: true,
+      message: "User logged in successfully",
+      data: existingUser,
+    };
+    return JSON.parse(JSON.stringify(response));
+  } catch (error: any) {
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+}
+
 //onboarding user
 export const onboardingUser = async (user: any,path:string) => {
   try {

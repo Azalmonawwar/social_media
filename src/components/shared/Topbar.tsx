@@ -4,9 +4,10 @@ import React from 'react'
 import { Button } from '../ui/button'
 import Image from 'next/image'
 import { logoutUser } from '@/lib/actions/user.action'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 
 const TopBar = () => {
+  
   const logout = () => { 
     const res = logoutUser()
     redirect('/login')

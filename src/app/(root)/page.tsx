@@ -1,25 +1,27 @@
-import Image from 'next/image'
-import Container from '@/components/shared/Container'
 import { getAllPosts } from '@/lib/actions/post.action'
+import PostCard from '@/components/shared/PostCard'
+import { IPost } from '@/lib/types'
+import { getUserByToken } from '@/lib/actions/user.action'
 
 const Home = async() =>{
 
   const data = await getAllPosts()
+  const user = await getUserByToken() 
   return (
-    <Container>
+    <section className='flex flex-col items-start gap-10  py-2 md:py-24 mb-[80px]  md:px-8 lg:ml-[270px] md:ml-[100px] md:mr-0 sl:mr-[300px] '>
+      <h1 className="text-2xl md:text-3xl  font-bold text-center ml-2">Home Feed</h1>
       {
-        data.data.map((item, index) => (
+        data.data.map((item:IPost, index:number) => (
           
-          <div key={index}>
-            <h1>{item.user.name}</h1>
-            <Image src={item.image} alt="Picture of the author" width={100} height={100} />
-            <p>{item.caption}</p>
-            <p>{item.tags}</p>
-          </div>
+          <PostCard
+            key={index}
+            user= {user.data._id}
+            post={item}
+            />
         ))
       }
       
-    </Container>
+    </section>
   )
 }
 

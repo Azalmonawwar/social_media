@@ -29,7 +29,7 @@ export default function RootLayout({
         <TopBar/>
         <Leftbar/>
         {children}
-        {/* <Rightbar/> */}
+        <Rightbar/>
         <Bottombar/>
         </body>
     </html>

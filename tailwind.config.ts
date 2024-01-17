@@ -20,7 +20,7 @@ const config = {
     extend: {
       colors:{
         'primary': "#0D1321",
-        'dark-secondary': "#0B101E",
+        'dark-secondary': "#3f3f46",
         'notification': '#FFB620',
         'off-white': '#D0DFFF',
         'red': '#FF5A5A',
@@ -34,7 +34,8 @@ const config = {
         'tertiary': '#FFFFFF',
       },
       screens:{
-        'xs':'480px'
+        'xs':'480px',
+        'sl':'1200px'
       },
       keyframes: {
         'accordion-down': {

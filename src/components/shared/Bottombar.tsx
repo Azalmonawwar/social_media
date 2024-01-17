@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 const Bottombar = () => {
   const pathname = usePathname()
   return (
-    <section className="z-50 flex justify-between  w-full fixed bg-dark-secondary  bottom-0  rounded-t-[20px] bg-dark-2 px-5 py-4 md:hidden">
+    <section className="z-50 flex justify-between  w-full fixed bg-zinc-950  bottom-0  rounded-t-[20px] bg-dark-2 px-5 py-4 md:hidden">
       {bottombarLinks.map((link) => {
         const isActive = pathname === link.route;
         return (
@@ -14,7 +14,7 @@ const Bottombar = () => {
             key={`bottombar-${link.label}`}
             href={link.route}
             className={`${isActive && 
-               "rounded-[10px] bg-blue-500 "
+               "rounded-[10px] bg-zinc-700 "
             } flex items-center flex-col gap-1 p-2 transition`}>
             <img
               src={link.imgURL}
