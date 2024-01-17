@@ -5,15 +5,15 @@ import React from 'react'
 import { Fira_Sans } from 'next/font/google';
 import { Button } from '../ui/button';
 import Image from 'next/image';
-import { useRouter, usePathname, redirect } from 'next/navigation';
+import {  usePathname, useRouter, } from 'next/navigation';
 import { logoutUser } from '@/lib/actions/user.action';
 const fira = Fira_Sans({ weight: ["400", "500", "600", "700"], subsets: ['latin'] })
 const Leftbar = () => {
     const pathname = usePathname()
-    
-    const logout = () => { 
-        const res = logoutUser()
-        redirect('/login')
+    const router = useRouter()
+    const logout = async() => { 
+        const res =await logoutUser()
+        router.push('/login')
     }
     return (
         <nav className='fixed top-0 left-0 md:flex px-6 py-10 flex-col justify-between hidden lg:w-[270px] md:w-[100px] bg-zinc-950 h-screen'>

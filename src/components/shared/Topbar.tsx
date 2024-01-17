@@ -7,10 +7,10 @@ import { logoutUser } from '@/lib/actions/user.action'
 import { redirect, useRouter } from 'next/navigation'
 
 const TopBar = () => {
-  
-  const logout = () => { 
-    const res = logoutUser()
-    redirect('/login')
+  const router = useRouter()
+  const logout = async() => { 
+    const res = await logoutUser()
+    router.push('/login')
 }
   return (
     <section className=" sticky top-0 z-50 md:hidden bg-dark-1 w-full">

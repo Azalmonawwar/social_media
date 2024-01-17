@@ -12,12 +12,12 @@ const Rightbar = async () => {
 
 
         <div className="flex items-center gap-3 mb-5">
-          <Link href={`/profile/${data._id}`}>
+          <Link href={`/profile/${data?._id}`}>
             <Image
               height={100}
               width={100}
               src={
-                data.avatar ||
+                data?.avatar ||
                 "/assets/icons/profile-placeholder.svg"
               }
               alt="creator"
@@ -27,7 +27,7 @@ const Rightbar = async () => {
 
           <div className="flex flex-col ">
             <p className="text-[16px] font-medium leading-[140%] lg:text-[18px] lg:font-bold  text-white">
-              {data.name}
+              {data?.name}
             </p>
 
           </div>
@@ -37,12 +37,12 @@ const Rightbar = async () => {
         <div className=''>
           <h2 className='text-xl font-semibold'>Top Creators</h2>
             <div className='flex  flex-col  gap-4'>
-              <Link href={`/profile/${data._id}`} className='flex items-center gap-4'>
+              <Link href={`/profile/${data?._id}`} className='flex items-center gap-4'>
                 <Image
                   height={100}
                   width={100}
                   src={
-                    data.avatar ||
+                    data?.avatar ||
                     "/assets/icons/profile-placeholder.svg"
                   }
                   alt="creator"
@@ -50,7 +50,7 @@ const Rightbar = async () => {
                 />
                 <div className="flex">
                   <p className="text-[16px]  text-white">
-                    {data.name}
+                    {data?.name}
                   </p>
 
                 </div>

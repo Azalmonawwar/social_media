@@ -194,7 +194,7 @@ export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
 
     // check if user exists
     const existingUser = await User.findOne({
-       email: user.email
+       email: user.email.toLowerCase()
     });
 
     if (!existingUser) {
@@ -851,5 +851,4 @@ export const getPosts = async (id: string,path:string) => {
     return JSON.parse(JSON.stringify(response));
   }
 };
-
 

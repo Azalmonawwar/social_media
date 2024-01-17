@@ -3,6 +3,7 @@
 
 import Saved from "@/lib/db/models/saved.models"
 import { connectToDatabase } from "@/lib/db/connect"
+import { revalidatePath } from "next/cache"
 
 //save a post to user's saved posts
 export async function savePost(userId: string, postId: string) {
@@ -12,28 +13,46 @@ export async function savePost(userId: string, postId: string) {
         const saved = await Saved.findOne({ user: userId })
     
         if (saved) {
-            if (saved.posts.includes(postId)) {
-                saved.posts.pull(postId)
+            if (saved.post.includes(postId)) {
+                const index = saved.post.indexOf(postId)
+                if(index!==-1){
+                    saved.post.splice(index,1)
+                }
+                await saved.save()
+                const response = {
+                    status:"200",
+                    message:"unsaved post successfully",
+                    data:saved
+                }
+                revalidatePath('/')
+                revalidatePath('/saved')
+                return JSON.parse(JSON.stringify(response)) 
             } else {
-                saved.posts.push(postId)
-            }
-            await saved.save()
+                saved.post.push(postId)
+                await saved.save()
             const response = {
                 status:"200",
                 message:"saved post successfully",
                 data:saved
             }
+            revalidatePath('/')
+            revalidatePath('/saved')
             return JSON.parse(JSON.stringify(response)) 
+            }
+            
         } else {
             const newSaved = await Saved.create({
                 user: userId,
-                posts: [postId],
+                post: [postId],
             })
             const response = {
                 status:"200",
                 message:"saved post successfully",
                 data:newSaved
             }
+            revalidatePath('/')
+            revalidatePath('/saved')
+
             return JSON.parse(JSON.stringify(response))
         }
     } catch (error:any) {
@@ -52,13 +71,18 @@ export async function getSavedPosts(userId: string) {
    try {
      await connectToDatabase()
  
-     const saved = await Saved.findOne({ user: userId }).populate("posts")
+     const saved = await Saved.findOne({ user: userId }).populate({
+        path:"post",
+        model:"Post",
+        select:"_id image"
+     })
  
          const response = {
              status:"200",
              message:"saved post successfully",
              data:saved
          }
+         revalidatePath('/saved')
          return JSON.parse(JSON.stringify(response))
       
    } catch (error:any) {
@@ -72,6 +96,29 @@ export async function getSavedPosts(userId: string) {
    }
 }
 
+export async function getSaved(userId: string) {
+    try {
+      await connectToDatabase()
+  
+      const saved = await Saved.findOne({ user: userId })
+  
+          const response = {
+              status:"200",
+              message:"saved post successfully",
+              data:saved
+          }
+          return JSON.parse(JSON.stringify(response))
+       
+    } catch (error:any) {
+          
+          const response = {
+               status:"400",
+               message:error.message,
+               data:null
+          }
+          return JSON.parse(JSON.stringify(response))
+    }
+ }
 //check if a post is saved by a user
 export async function checkSavedPost(userId: string, postId: string) {
     try {

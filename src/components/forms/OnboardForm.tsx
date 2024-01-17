@@ -22,7 +22,7 @@ const OnboardForm = ({email}:{email:string}) => {
         }
         const response = await onboardingUser(data,'/')
         if(response.status){
-            redirect('/profile')
+            redirect('/')
         }
     }
     return (
