@@ -26,7 +26,7 @@ const Rightbar = async () => {
           </Link>
 
           <div className="flex flex-col ">
-            <p className="text-[16px] font-medium leading-[140%] lg:text-[18px] lg:font-bold  text-white">
+            <p className="text-[16px] capitalize font-medium leading-[140%] lg:text-[18px] lg:font-bold  text-white">
               {data?.name}
             </p>
 

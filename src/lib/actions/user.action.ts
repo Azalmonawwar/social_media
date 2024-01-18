@@ -12,6 +12,7 @@ import Post from "@/lib/db/models/post.models";
 import { LoginValidation, SignupValidation } from "../validations";
 import { sendMail } from "../utils/sendVerficationMail";
 import bcrypt from "bcryptjs";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 export const createUser = async (user: z.infer<typeof SignupValidation>) => {
   try {
     await connectToDatabase();
@@ -280,12 +281,16 @@ export const getUserByToken = async () => {
   try {
     await connectToDatabase();
     // check if token is provided
-    const token :Token = cookies().get('token');
+    const token :RequestCookie | undefined = cookies().get('token');
     const decoedToken = jwt.verify(token.value, process.env.JWT_SECRET as string);
 
     // check if user exists
     const existingUser = await User.findOne({
         _id: decoedToken?.id,
+    }).populate({
+      path:"posts",
+      model:"Post",
+      select:"_id image"
     });
 
     if (!existingUser) {
@@ -344,6 +349,10 @@ export const getUserById=async(userId:string)=>{
     // check if user exists
     const existingUser = await User.findOne({
         _id: userId
+    }).populate({
+      path:"posts",
+      model:"Post",
+      select:"_id image"
     });
 
     if (!existingUser) {
