@@ -52,3 +52,24 @@
 ::-webkit-scrollbar-track {
   background: #646363;
 }
+
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap:2px;
+}
+
+.menu span {
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background-color: #fff;
+  margin-bottom: 2px;
+  transition: 0.3s;
+}
+
+.menu:hover span {
+  background-color: #555;
+}

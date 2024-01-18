@@ -1,6 +1,7 @@
 import Container from '@/components/shared/Container'
+import FollowBtn from '@/components/shared/FollowBtn'
 import { Button } from '@/components/ui/button'
-import { getUserById} from '@/lib/actions/user.action'
+import { getUserById, getUserByToken} from '@/lib/actions/user.action'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -8,16 +9,18 @@ import React from 'react'
 const page = async ({params}:any) => {
   const{id} = params;
   const { data } = await getUserById(id)
-  
+  const user = await getUserByToken()     
+  const isFollowing = data.followers.includes(user?.data?._id)
+  // console.log(isFollowing)
   return (
     <Container>
-      <div className=' py-5 px-4 xl:w-[60%] w-full mx-auto flex sm:justify-center md:gap-24 gap-5 '>
+      <div className=' py-5 px-4 xl:w-[60%] w-full mx-auto flex sm:justify -center md:gap-24 gap-5 '>
         <div>
           <Image
             src={data?.avatar || "/icons/user.svg"}
             alt={data.name}
-            height={100}
-            width={100}
+            height={300}
+            width={300}
             className='lg:h-[150px] lg:w-[150px] md:h-[100px] md:w-[100px] h-[80px] w-[80px] rounded-full' />
         </div>
         <div className='flex flex-col gap-2'>
@@ -26,7 +29,7 @@ const page = async ({params}:any) => {
               <p className='text-[18px] '>@{data?.username}</p>
             </div>
             <div className='flex gap-4'>
-              <Button>Follow</Button>
+                <FollowBtn loginUser={user.data._id} followUser={data._id} isFollowing={isFollowing}/>
               {/* <Button>View Saved</Button> */}
             </div>
           </div>
@@ -84,24 +87,27 @@ const page = async ({params}:any) => {
       <hr className='xl:w-[60%] w-full mx-auto' />
       {/* //mobile view closed  */}
       <div className='w-full'>
-        <p className='text-center  '>Your Posts</p>
-        <div className='w-[90%] mx-auto grid xl:grid-cols-4 grid-cols-3'>
-          {
-            data?.posts?.map((image:{_id:string,image:string})=>{
-              return(
-                <Link href={`/posts/${image._id}`} className='flex justify-start xl:mt-8 mt-3' key={image._id} >
-                <Image
-                src={image.image}
-                alt={image._id}
-                height={300}
-                width={300}
-                className='object-cover sm:h-[13rem]  sm:w-[13rem] xs:h-[150px] xs:w-[150px] h-[110px] w-[110px] lg:w-[180px] lg:h-[180px]  xl:h-[270px] xl:w-[270px]' 
-                />
-              </Link>
-              )
-            })
-          }
+        <p className=' sm:mb-10 mb:5 text-center font-bold text-2xl'>Your Posts</p>
+        <div className='flex flex-col mx-auto items-center justify-center'>
+
+          <div className='grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 md:gap-2 gap-5   items-center '>
+            {
+              data?.posts?.map((image: { _id: string, image: string }) => {
+                return (
+                  <Link key={image._id} href={`/posts/${image._id}`} className='flex justify-center xl:justify-start sm:h-[13rem]  sm:w-[13rem] xs:h-[150px] xs:w-[150px] h-[110px] w-[110px] lg:w-[180px] lg:h-[180px]  xl:h-[250px] xl:w-[250px]' >
+                    <Image
+                      src={image.image}
+                      alt={image._id}
+                      height={300}
+                      width={300}
+                      className='object-cover sm:h-[13rem]  sm:w-[13rem] xs:h-[150px] xs:w-[150px] h-[110px] w-[110px] lg:w-[180px] lg:h-[180px]  xl:h-[250px] xl:w-[250px]'
+                    />
+                  </Link>
+                )
+              })
+            }
           </div>
+        </div>
       </div>
     </Container>
   )

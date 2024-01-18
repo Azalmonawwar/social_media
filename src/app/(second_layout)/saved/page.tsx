@@ -15,15 +15,18 @@ const page = async() => {
       <h2 className='text-2xl font-bold'>
         Saved Post
       </h2>
-      <div className='grid grid-cols-3 sl:grid:cols-3 xl:grid-cols-4 md:gap-2 sm:gap-1   items-center w-full'>
+      <div className='flex flex-col mx-auto items-center justify-center'>
+
+      <div className='grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 md:gap-2 gap-5   items-center '>
          {
-          savedPost && savedPost?.data?.post?.map((image:{_id:string,image:string})=>{
-            return(
-              <Card image={image} key={image.image}/>
-            )
-          })
-         }
+           savedPost && savedPost?.data?.post?.map((image:{_id:string,image:string})=>{
+             return(
+               <Card image={image} key={image.image}/>
+               )
+              })
+            }
       </div>
+            </div>
          {
           (savedPost.data ===null || savedPost.data?.post.length === 0)  &&
           <div className='self-center sm:h-[400px] h-[350px] text-2xl font-semibold flex flex-col gap-2 items-center justify-center'>

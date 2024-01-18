@@ -19,7 +19,8 @@ const PostForm =async () => {
     const location = formData.get('location')
     const image = await uploadPic(pic as File)
     const res = await createPost(id,{ caption, tags, location, image })
-    if (res.status) {
+    // console.log(res)
+    if (res.status===200) {
       redirect('/')
     }
   };

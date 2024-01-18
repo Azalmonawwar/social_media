@@ -1,12 +1,17 @@
+import PostCard from "@/components/shared/PostCard"
+import Wrapper from "@/components/shared/Wrapper"
 import { getPostById } from "@/lib/actions/post.action"
+import { getUserByToken } from "@/lib/actions/user.action"
 
 
 const pages =async ({params}:any) => {
   const {id} = params
-  const data = await getPostById(id)
-  console.log(data)
+  const post = await getPostById(id)
+  const {data} = await getUserByToken()
   return (
-    <div>{params.id}</div>
+    <Wrapper>
+      <PostCard  user={data._id} post={post.data}/>
+    </Wrapper>
   )
 }
 

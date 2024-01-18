@@ -4,10 +4,10 @@ import * as z from "zod";
 import User from "@/lib/db/models/user.models";
 import { connectToDatabase } from "@/lib/db/connect";
 import jwt from "jsonwebtoken";
-import {cookies} from 'next/headers'
+import { cookies } from "next/headers";
 import { IUser } from "@/lib/types";
 import { revalidatePath } from "next/cache";
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer";
 import Post from "@/lib/db/models/post.models";
 import { LoginValidation, SignupValidation } from "../validations";
 import { sendMail } from "../utils/sendVerficationMail";
@@ -17,12 +17,7 @@ export const createUser = async (user: z.infer<typeof SignupValidation>) => {
   try {
     await connectToDatabase();
     // check if all required fields are provided
-    if (
-      !user.name ||
-      !user.username ||
-      !user.password ||
-      !user.email
-    ) {
+    if (!user.name || !user.username || !user.password || !user.email) {
       const response = {
         status: false,
         message: "Please provide all required fields",
@@ -39,9 +34,7 @@ export const createUser = async (user: z.infer<typeof SignupValidation>) => {
     }
 
     // check if user already exists
-    const existingUser = await User.findOne(
-       { email: user.email }
-    );
+    const existingUser = await User.findOne({ email: user.email });
 
     if (existingUser) {
       const response = {
@@ -54,22 +47,27 @@ export const createUser = async (user: z.infer<typeof SignupValidation>) => {
     // create new user
     const newUser = new User(user);
 
-
     //generate token for isverificationtoken
-    const verificationToken = jwt.sign({
-      id: newUser._id,
-    }
-    , process.env.JWT_SECRET as string, {
-      expiresIn: "30d",
-    });
-
+    const verificationToken = jwt.sign(
+      {
+        id: newUser._id,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "30d",
+      }
+    );
 
     //generate token for reset password
-    const resetToken = jwt.sign({
-      id: newUser._id,
-    }, process.env.JWT_SECRET as string, {
-      expiresIn: "365d",
-    });
+    const resetToken = jwt.sign(
+      {
+        id: newUser._id,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "365d",
+      }
+    );
 
     // if token is not created
     if (!verificationToken) {
@@ -95,8 +93,11 @@ export const createUser = async (user: z.infer<typeof SignupValidation>) => {
       return JSON.parse(JSON.stringify(response));
     }
     //send verification mail
-    const mail = await sendMail(saveduser.email,saveduser.name,verificationToken);
-    
+    const mail = await sendMail(
+      saveduser.email,
+      saveduser.name,
+      verificationToken
+    );
 
     // return new user
     const response = {
@@ -113,7 +114,6 @@ export const createUser = async (user: z.infer<typeof SignupValidation>) => {
     return JSON.parse(JSON.stringify(response));
   }
 };
-
 
 //verify user
 export const verifyUser = async (token: string) => {
@@ -173,11 +173,11 @@ export const verifyUser = async (token: string) => {
 };
 
 //login user
-export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
+export const loginUser = async (user: z.infer<typeof LoginValidation>) => {
   try {
     await connectToDatabase();
     // check if all required fields are provided
-    if (!user.password || !user.email ) {
+    if (!user.password || !user.email) {
       const response = {
         status: false,
         message: "Please provide all required fields",
@@ -195,7 +195,7 @@ export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
 
     // check if user exists
     const existingUser = await User.findOne({
-       email: user.email.toLowerCase()
+      email: user.email.toLowerCase(),
     });
 
     if (!existingUser) {
@@ -227,12 +227,13 @@ export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
     }
     //create token
     const token = jwt.sign(
-      { id: existingUser._id,
+      {
+        id: existingUser._id,
         name: existingUser.name,
         username: existingUser.username,
         email: existingUser.email,
         phone: existingUser.phone,
-     },
+      },
       process.env.JWT_SECRET as string,
       { expiresIn: "1d" }
     );
@@ -247,14 +248,14 @@ export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
     }
 
     //add token to cookies
-    const cookie = cookies().set('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development',
-        sameSite: 'strict',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
-        path: '/',
-        });
-        
+    const cookie = cookies().set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
+      path: "/",
+    });
+
     // return existing user
     const response = {
       status: true,
@@ -272,25 +273,28 @@ export const loginUser = async (user:z.infer<typeof LoginValidation>) => {
 };
 
 type Token = {
-    value: string;
-    name:string;
-    };
+  value: string;
+  name: string;
+};
 
-//get user by token 
+//get user by token
 export const getUserByToken = async () => {
   try {
     await connectToDatabase();
     // check if token is provided
-    const token :RequestCookie | undefined = cookies().get('token');
-    const decoedToken = jwt.verify(token.value, process.env.JWT_SECRET as string);
+    const token: RequestCookie | undefined = cookies().get("token");
+    const decoedToken = jwt.verify(
+      token.value,
+      process.env.JWT_SECRET as string
+    );
 
     // check if user exists
     const existingUser = await User.findOne({
-        _id: decoedToken?.id,
+      _id: decoedToken?.id,
     }).populate({
-      path:"posts",
-      model:"Post",
-      select:"_id image"
+      path: "posts",
+      model: "Post",
+      select: "_id image",
     });
 
     if (!existingUser) {
@@ -317,18 +321,17 @@ export const getUserByToken = async () => {
   }
 };
 
-
 //logout user
 export const logoutUser = () => {
   try {
     // check if token is provided
-    cookies().delete('token');
+    cookies().delete("token");
 
     const response = {
-        status: true,
-        message: "User logged out successfully",
-        };
-    
+      status: true,
+      message: "User logged out successfully",
+    };
+
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -341,18 +344,17 @@ export const logoutUser = () => {
 
 //get user by id
 
-export const getUserById=async(userId:string)=>{
+export const getUserById = async (userId: string) => {
   try {
     await connectToDatabase();
-    
 
     // check if user exists
     const existingUser = await User.findOne({
-        _id: userId
+      _id: userId,
     }).populate({
-      path:"posts",
-      model:"Post",
-      select:"_id image"
+      path: "posts",
+      model: "Post",
+      select: "_id image",
     });
 
     if (!existingUser) {
@@ -377,14 +379,14 @@ export const getUserById=async(userId:string)=>{
     };
     return JSON.parse(JSON.stringify(response));
   }
-}
+};
 
 //onboarding user
-export const onboardingUser = async (user: any,path:string) => {
+export const onboardingUser = async (user: any, path: string) => {
   try {
     await connectToDatabase();
     // check if all required fields are provided
-    if (  !user.email ) {
+    if (!user.email) {
       const response = {
         status: false,
         message: "Please provide all required fields",
@@ -393,9 +395,7 @@ export const onboardingUser = async (user: any,path:string) => {
     }
 
     // check if user exists
-    const existingUser = await User.findOne(
-      { email: user.email }
-    );
+    const existingUser = await User.findOne({ email: user.email });
 
     if (!existingUser) {
       const response = {
@@ -427,7 +427,7 @@ export const onboardingUser = async (user: any,path:string) => {
       message: "User updated successfully",
       data: updatedUser,
     };
-    revalidatePath(path)
+    revalidatePath(path);
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -437,7 +437,6 @@ export const onboardingUser = async (user: any,path:string) => {
     return JSON.parse(JSON.stringify(response));
   }
 };
-
 
 //update user
 export const updateUser = async (user: IUser) => {
@@ -454,7 +453,7 @@ export const updateUser = async (user: IUser) => {
 
     // check if user exists
     const existingUser = await User.findOne({
-     email: user.email 
+      email: user.email,
     });
 
     if (!existingUser) {
@@ -466,11 +465,9 @@ export const updateUser = async (user: IUser) => {
     }
 
     // update user
-    const updatedUser = await User.findByIdAndUpdate(
-      existingUser._id,
-      user,
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(existingUser._id, user, {
+      new: true,
+    });
 
     // if user is not updated
     if (!updatedUser) {
@@ -520,20 +517,20 @@ export const sendResetPasswordLink = async (email: string) => {
       };
       return JSON.parse(JSON.stringify(response));
     }
-    
+
     const token = existingUser.resetToken;
 
     //send reset password mail
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: 'todaytalks3@gmail.com',
-        pass:process.env.PASSWORD,
+        user: "todaytalks3@gmail.com",
+        pass: process.env.PASSWORD,
       },
     });
 
     const mailOption = {
-      from: 'todaytalks3@gmail.com',
+      from: "todaytalks3@gmail.com",
       to: email,
       subject: "Thank you for your message",
       html: `
@@ -547,11 +544,11 @@ export const sendResetPasswordLink = async (email: string) => {
         <small>This is an automated email. Please do not reply.</small>
       </div>
     </div>
-  `
-  }
+  `,
+    };
 
     // return saved user
-    const res = await transporter.sendMail(mailOption)
+    const res = await transporter.sendMail(mailOption);
     const response = {
       status: true,
       message: "Reset password link sent successfully",
@@ -582,12 +579,9 @@ export const resetPassword = async (password: string, token: string) => {
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
-    
+
     // check if user exists
     const existingUser = await User.findOne({ resetToken: token });
-
-    
-
 
     if (!existingUser) {
       const response = {
@@ -606,16 +600,24 @@ export const resetPassword = async (password: string, token: string) => {
     }
 
     //generate new token for reset password
-    const newResetToken = jwt.sign({
-      id: token,
-    }, process.env.JWT_SECRET as string, {
-      expiresIn: "365d",
-    });
+    const newResetToken = jwt.sign(
+      {
+        id: token,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "365d",
+      }
+    );
 
     // update user
     const updatedUser = await User.findByIdAndUpdate(
       existingUser._id,
-      { password:hashedPassword, resetToken: newResetToken, resetTokenExpiry: Date.now() },
+      {
+        password: hashedPassword,
+        resetToken: newResetToken,
+        resetTokenExpiry: Date.now(),
+      },
       { new: true }
     );
 
@@ -663,7 +665,6 @@ export const deleteUser = async (id: string) => {
     // delete user
     const deletedUser = await User.findByIdAndDelete(id);
 
-
     // also delete all posts of user
     await Post.deleteMany({ user: id });
 
@@ -692,84 +693,12 @@ export const deleteUser = async (id: string) => {
   }
 };
 
-
-//count followers
-export const countFollowers = async (id: string,path:string) => {
-  try {
-    await connectToDatabase();
-    // check if user exists
-    const existingUser = await User.findById(id);
-
-    if (!existingUser) {
-      const response = {
-        status: false,
-        message: "User does not exists",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-
-    // count followers
-    const followers = existingUser.followers.length;
-
-    // return followers
-    const response = {
-      status: true,
-      message: "Followers counted successfully",
-      data: followers,
-    };
-    revalidatePath(path)
-    return JSON.parse(JSON.stringify(response));
-  } catch (error: any) {
-    const response = {
-      status: false,
-      message: error.message,
-    };
-    return JSON.parse(JSON.stringify(response));
-  }
-};
-
-
-//count following
-export const countFollowing = async (id: string,path:string) => {
-  try {
-    await connectToDatabase();
-    // check if user exists
-    const existingUser = await User.findById(id);
-
-    if (!existingUser) {
-      const response = {
-        status: false,
-        message: "User does not exists",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-
-    // count following
-    const following = existingUser.following.length;
-
-    // return following
-    const response = {
-      status: true,
-      message: "Following counted successfully",
-      data: following,
-    };
-    revalidatePath(path)
-    return JSON.parse(JSON.stringify(response));
-  } catch (error: any) {
-    const response = {
-      status: false,
-      message: error.message,
-    };
-    return JSON.parse(JSON.stringify(response));
-  }
-};
-
-//get following user 
+//get following user
 export const getFollowing = async (id: string) => {
   try {
     await connectToDatabase();
     // check if user exists
-    const existingUser = await User.findById(id).populate('following');
+    const existingUser = await User.findById(id).populate("following");
 
     if (!existingUser) {
       const response = {
@@ -797,11 +726,11 @@ export const getFollowing = async (id: string) => {
 };
 
 // get followers of a user
-export const getFollowers = async (id: string,path:string) => {
+export const getFollowers = async (id: string, path: string) => {
   try {
     await connectToDatabase();
     // check if user exists
-    const existingUser = await User.findById(id).populate('followers');
+    const existingUser = await User.findById(id).populate("followers");
 
     if (!existingUser) {
       const response = {
@@ -817,7 +746,7 @@ export const getFollowers = async (id: string,path:string) => {
       message: "Followers fetched successfully",
       data: existingUser.followers,
     };
-    revalidatePath(path)
+    revalidatePath(path);
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     console.log(error);
@@ -829,11 +758,11 @@ export const getFollowers = async (id: string,path:string) => {
   }
 };
 // get all posts of a user
-export const getPosts = async (id: string,path:string) => {
+export const getPosts = async (id: string, path: string) => {
   try {
     await connectToDatabase();
     // check if user exists
-    const existingUser = await User.findById(id).populate('posts');
+    const existingUser = await User.findById(id).populate("posts");
 
     if (!existingUser) {
       const response = {
@@ -849,7 +778,7 @@ export const getPosts = async (id: string,path:string) => {
       message: "Posts fetched successfully",
       data: existingUser.posts,
     };
-    revalidatePath(path)
+    revalidatePath(path);
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     console.log(error);
@@ -861,3 +790,76 @@ export const getPosts = async (id: string,path:string) => {
   }
 };
 
+export const toggleFollow = async (
+  userPerformingActionId: string,
+  userToFollowId: string
+) => {
+  try {
+    // Find the user performing the action
+    const userPerformingAction = await User.findById(userPerformingActionId);
+
+    // Find the user to follow/unfollow
+    const userToFollow = await User.findById(userToFollowId);
+
+    if (!userPerformingAction || !userToFollow) {
+      const response = {
+        status: false,
+        data: "User id is not provided",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    // Check if the user is already following the target user
+    const isFollowing = userPerformingAction.following.includes(userToFollowId);
+
+    if (isFollowing) {
+      // Unfollow the user
+
+      const indexOfFollowing = userPerformingAction.following.indexOf(
+        userToFollowId
+      );
+      if (indexOfFollowing !== -1) {
+        userPerformingAction.following.splice(indexOfFollowing, 1);
+      }
+      const indexOfFollower = userToFollow.followers.indexOf(userPerformingActionId);
+      if (indexOfFollower !== -1) {
+        userToFollow.followers.splice(indexOfFollower, 1);
+      }
+      await userPerformingAction.save();
+      await userToFollow.save();
+
+      const response = {
+        status: true,
+        data: "unfollow sucessfully",
+      };
+
+      revalidatePath("/profile");
+      return JSON.parse(JSON.stringify(response));
+    } else {
+      // Follow the user
+      userPerformingAction.following.push(userToFollowId);
+      userToFollow.followers.push(userPerformingActionId);
+    }
+
+    // Save the changes to the database
+    await userPerformingAction.save();
+    await userToFollow.save();
+
+    const response = {
+      status: true,
+      data:"follow sucessfully"
+    };
+
+    revalidatePath("/profile");
+    return JSON.parse(JSON.stringify(response));
+  } catch (error: any) {
+    const response = {
+      status: false,
+      data: error.message,
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+};
+
+// Example usage:
+// toggleFollow('user1_id', 'user2_id');

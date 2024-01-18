@@ -100,7 +100,10 @@ export async function getAllPosts() {
 export async function getPostById(postId: string) {
   try {
     await connectToDatabase();
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate({
+      path:"user",
+      model:"User"
+    });
     if (!post) {
       const response = {
         status: 400,

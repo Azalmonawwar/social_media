@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import '../globals.css'
 import TopBar from '@/components/shared/Topbar'
 import Leftbar from '@/components/shared/Leftbar'
-import Rightbar from '@/components/shared/Rightbar'
 import Bottombar from '@/components/shared/Bottombar'
 import NextTopLoader from 'nextjs-toploader'
 
@@ -23,8 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <NextTopLoader
-        height={5}
-      color='#2581d3'
+        height={2}
+      color='#ffffff'
+      showSpinner={false}
       />
         <TopBar/>
         <Leftbar/>

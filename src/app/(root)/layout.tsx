@@ -23,8 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <NextTopLoader
-        height={5}
-      color='#2581d3'
+        height={2}
+      color='#FFFFFF'
+      showSpinner={false}
       />
         <TopBar/>
         <Leftbar/>
