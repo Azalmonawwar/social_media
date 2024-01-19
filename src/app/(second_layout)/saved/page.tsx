@@ -8,7 +8,7 @@ import React from 'react'
 
 const page = async() => {
   const {data} = await getUserByToken()
-  const savedPost = await getSavedPosts(data._id)
+  const savedPost = await getSavedPosts(data?._id)
   
   return (
     <Container>
