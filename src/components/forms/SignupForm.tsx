@@ -8,6 +8,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { SignupValidation } from "@/lib/validations";
 import { createUser } from "@/lib/actions/user.action";
+import Loader from "../shared/Loader";
 const SignupForm = () => {
     const form = useForm<z.infer<typeof SignupValidation>>({
         resolver: zodResolver(SignupValidation),
@@ -19,11 +20,13 @@ const SignupForm = () => {
         },
     });
     const [message, setMessage] = React.useState<string>("");
-
+    const [isLoading,setIsLoading] = React.useState<boolean>(false)
     const handleSignup = async (data: z.infer<typeof SignupValidation>) => {
         try {
+            setIsLoading(true)
             const response = await createUser(data);
-            console.log(response)
+            setIsLoading(false)
+            
             setMessage(response.message)
             form.reset()
         } catch (error:any) {
@@ -108,7 +111,7 @@ const SignupForm = () => {
                            
                     <Button type="submit" className="shad-button_primary">
 
-                        Sign Up
+                        {isLoading?<Loader/>:"Sign Up"}
 
                     </Button>
 

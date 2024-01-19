@@ -10,6 +10,7 @@ import {  LoginValidation } from "@/lib/validations";
 import { loginUser } from "@/lib/actions/user.action";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Loader from "../shared/Loader";
 const LoginForm = () => {
     const form = useForm<z.infer<typeof LoginValidation>>({
         resolver: zodResolver(LoginValidation),
@@ -18,16 +19,19 @@ const LoginForm = () => {
             password: "",
         },
     });
+    const [isLoading,setIsLoading] = React.useState<boolean>(false)
     const [message, setMessage] = React.useState<string>("");
     const router = useRouter();
     const handleLogin = async (data: z.infer<typeof LoginValidation>) => {
         try {
+            setIsLoading(true)
             const response = await loginUser(data)
+            setIsLoading(false)
             if(response?.status){
                 if(response?.data?.onboarding){
                     router.push('/')
                 }else{
-                    console.log(response.data)
+                    
                     router.push('/onboarding')
                 }
             }
@@ -83,9 +87,9 @@ const LoginForm = () => {
 
                    
 
-                    <Button type="submit" className="shad-button_primary">
+                    <Button type="submit" className="shad-button_primary flex items-center justify-center">
 
-                        Login
+                        {isLoading?<Loader/>:"Login"}
 
                     </Button>
 

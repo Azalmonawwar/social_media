@@ -12,6 +12,7 @@ export async function createPost(
   post: {
     caption: FormDataEntryValue | null;
     image: string | undefined;
+    imageId:string | undefined
     tags: FormDataEntryValue | null;
     location: FormDataEntryValue | null;
   }
@@ -49,6 +50,7 @@ export async function createPost(
     const newPost = await Post.create({
       caption: post.caption,
       image: post.image,
+      imageId: post.imageId,
       tags: post.tags,
       location: post.location,
       user: userId,
@@ -78,7 +80,7 @@ export async function getAllPosts() {
   try {
     await connectToDatabase();
     const posts = await Post.find()
-      .populate({ path: "user", model: "User" })
+      .populate({ path: "user", model: "User"  ,select:"_id avatar name"})
       .sort({ createdAt: -1 });
     const response = {
       status: 200,
@@ -102,8 +104,17 @@ export async function getPostById(postId: string) {
     await connectToDatabase();
     const post = await Post.findById(postId).populate({
       path:"user",
-      model:"User"
-    });
+      model:"User",
+      select:"_id avatar name"
+    }).populate({
+      path:"comments",
+      model:"Comment",
+      populate:{
+        path:'user',
+        select:"_id name avatar"
+      }
+      
+    })
     if (!post) {
       const response = {
         status: 400,
@@ -166,12 +177,20 @@ export async function deletePostById(postId: string, userId: string) {
       return JSON.parse(JSON.stringify(response));
     }
 
+    const index = userExists.posts.indexOf(postId)
+    if(index!==-1){
+      userExists.posts.slice(index,1)
+    }
+    await userExists.save();
     await post.remove();
+
     const response = {
       status: 200,
       message: "Post deleted successfully",
       data: post,
     };
+    revalidatePath('/')
+    revalidatePath('/profile')
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -269,86 +288,6 @@ export async function getPostByCaption(caption: string, page: number) {
   }
 }
 
-//get likes count by post id
-export async function getLikesCountByPostId(postId: string) {
-  try {
-    await connectToDatabase();
-    const post = await Post.findById(postId);
-    if (!post) {
-      const response = {
-        status: 400,
-        message: "Post does not exist",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-    const response = {
-      status: 200,
-      message: "Likes count fetched successfully",
-      data: post.likes.length,
-    };
-    return JSON.parse(JSON.stringify(response));
-  } catch (error: any) {
-    const response = {
-      status: 400,
-      message: error.message,
-    };
-    return JSON.parse(JSON.stringify(response));
-  }
-}
-
-//get comments count by post id
-export async function getCommentsCountByPostId(postId: string) {
-  try {
-    await connectToDatabase();
-    const post = await Post.findById(postId);
-    if (!post) {
-      const response = {
-        status: 400,
-        message: "Post does not exist",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-    const response = {
-      status: 200,
-      message: "Comments count fetched successfully",
-      data: post.comments.length,
-    };
-    return JSON.parse(JSON.stringify(response));
-  } catch (error: any) {
-    const response = {
-      status: 400,
-      message: error.message,
-    };
-    return JSON.parse(JSON.stringify(response));
-  }
-}
-
-//get all comments by post id
-export async function getAllCommentsByPostId(postId: string) {
-  try {
-    await connectToDatabase();
-    const post = await Post.findById(postId);
-    if (!post) {
-      const response = {
-        status: 400,
-        message: "Post does not exist",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-    const response = {
-      status: 200,
-      message: "Comments fetched successfully",
-      data: post.comments,
-    };
-    return JSON.parse(JSON.stringify(response));
-  } catch (error: any) {
-    const response = {
-      status: 400,
-      message: error.message,
-    };
-    return JSON.parse(JSON.stringify(response));
-  }
-}
 
 //create comment by post id with userid
 export async function createCommentByPostId(
@@ -368,7 +307,7 @@ export async function createCommentByPostId(
 
     //check if user exists
 
-    const userExists = await User.findById(userId);
+    const userExists = await User.findById(userId).select("-password");
     if (!userExists) {
       const response = {
         status: 400,
@@ -395,82 +334,13 @@ export async function createCommentByPostId(
     userExists.comments.push(newComment._id);
     post.comments.push(newComment._id);
     await post.save();
+    await userExists.save();
     const response = {
       status: 200,
       message: "Comment created successfully",
       data: post.comments,
     };
-    return JSON.parse(JSON.stringify(response));
-  } catch (error: any) {
-    const response = {
-      status: 400,
-      message: error.message,
-    };
-    return JSON.parse(JSON.stringify(response));
-  }
-}
-
-//reply to comment by post id with userid and comment id
-export async function replyToCommentByPostId(
-  postId: string,
-  userId: string,
-  commentId: string,
-  reply: string
-) {
-  try {
-    await connectToDatabase();
-    if (!userId) {
-      const response = {
-        status: 400,
-        message: "User Id is required",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-
-    //check if user exists
-
-    const userExists = await User.findById(userId);
-    if (!userExists) {
-      const response = {
-        status: 400,
-        message: "User does not exist",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-
-    const post = await Post.findById(postId);
-    if (!post) {
-      const response = {
-        status: 400,
-        message: "Post does not exist",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-
-    const comment = await Comment.findById(commentId);
-    if (!comment) {
-      const response = {
-        status: 400,
-        message: "Comment does not exist",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-
-    const newComment = {
-      text: reply,
-      user: userId,
-      post: postId,
-    };
-
-    const replyComment = await Comment.create(newComment);
-    comment.replies.push(replyComment._id);
-
-    await comment.save();
-    const response = {
-      status: 200,
-      message: "Comment replied successfully",
-      data: comment.replies,
-    };
+    revalidatePath('/posts')
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -570,7 +440,7 @@ export async function likePostByPostId(postId: string, userId: string) {
 
     //check if user exists
 
-    const userExists = await User.findById(userId);
+    const userExists = await User.findById(userId).select("-password");
     if (!userExists) {
       const response = {
         status: 400,

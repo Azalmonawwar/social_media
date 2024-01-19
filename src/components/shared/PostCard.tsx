@@ -6,6 +6,7 @@ import { timeAgo } from '@/lib/utils'
 
 import Poststatus from './Poststatus'
 import { getSaved } from '@/lib/actions/saved.action'
+import CommentForm from '../forms/CommentForm'
 const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
   const saved = await getSaved(user);
   return (
@@ -46,10 +47,11 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
             href={`/update-post/${post?._id}`}
             className={`${user !== post?.user?._id && "hidden"}`}>
             <Image
-              src={"/icons/edit.svg"}
+              src={"/icons/dots.png"}
               alt="edit"
-              width={20}
-              height={20}
+              width={48}
+              height={48}
+              className='invert'
             />
 
 
@@ -78,7 +80,7 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
           </ul>
         </div>
 
-
+            <CommentForm user={user} post={post?._id}/>
       </div>
     </>
   )

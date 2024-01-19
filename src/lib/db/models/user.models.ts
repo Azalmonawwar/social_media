@@ -9,6 +9,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   avatar: string | null;
+  avatarId:string |null;
   followers: string[];
   following: string[];
   posts: string[];
@@ -52,6 +53,10 @@ const UserSchema = new Schema({
         trim: true,
     },
     avatar: {
+        type: String,
+        default: "",
+    },
+    avatarId: {
         type: String,
         default: "",
     },

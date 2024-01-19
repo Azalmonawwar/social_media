@@ -272,18 +272,13 @@ export const loginUser = async (user: z.infer<typeof LoginValidation>) => {
   }
 };
 
-type Token = {
-  value: string;
-  name: string;
-};
-
 //get user by token
 export const getUserByToken = async () => {
   try {
     await connectToDatabase();
     // check if token is provided
-    const token: RequestCookie | undefined = cookies().get("token");
-    const decoedToken = jwt.verify(
+    const token: any= cookies().get("token");
+    const decoedToken :any = jwt.verify(
       token.value,
       process.env.JWT_SECRET as string
     );

@@ -1,52 +1,129 @@
-
-import { uploadPic } from '@/lib/utils/uploadPic';
+'use client'
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from 'react'
-import { Input } from '@/components/ui/input';
-import { Button } from '../ui/button';
-import { getUserByToken } from '@/lib/actions/user.action';
-import { createPost } from '@/lib/actions/post.action';
-import { redirect } from 'next/navigation';
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { PostValidation } from "@/lib/validations";
+import Loader from "../shared/Loader";
+import { Textarea } from "../ui/textarea";
+import FileUploader from "./FileUploader";
+import { uploadImage } from "@/lib/utils/uploadPic";
+import { createPost } from "@/lib/actions/post.action";
+import { getUserByToken } from "@/lib/actions/user.action";
+import { useRouter } from "next/navigation";
 
-const PostForm =async () => {
-  const {data} = await getUserByToken()
-  const id = data._id
-  
-  const create = async (formData: FormData) => {
-    'use server'
-    const pic = formData.get('image')
-    const caption = formData.get('caption')
-    const tags = formData.get('tags')
-    const location = formData.get('location')
-    const image = await uploadPic(pic as File)
-    const res = await createPost(id,{ caption, tags, location, image })
-    // console.log(res)
-    if (res.status===200) {
-      redirect('/')
-    }
-  };
-  return (
-    <form action={create} className='flex flex-col gap-4'>
-      <div className='flex flex-col gap-4'>
-        <label htmlFor="Caption">Caption</label>
-        <textarea className='bg-dark-secondary text-white p-3 outline-none border-none rounded-md' placeholder='Enter Your Caption' rows={6} id="caption" name='caption' />
-      </div>
-      <div className='flex flex-col gap-4'>
-        <label htmlFor="tags">Tags</label>
-        <input className='bg-dark-secondary text-white p-3 outline-none border-none rounded-md' placeholder='Tags' type="text" id="tags" name='tags' />
-      </div>
 
-      <div className='flex flex-col gap-4'>
-        <label htmlFor="location">Location</label>
-        <input className='bg-dark-secondary text-white p-3 outline-none border-none rounded-md' placeholder='location' type="text" id="location" name='location' />
-      </div>
+const PostForm = () => {
+    const form = useForm<z.infer<typeof PostValidation>>({
+        resolver: zodResolver(PostValidation),
 
-      <div className='flex flex-col gap-4'>
-        <label htmlFor="image">Image</label>
-        <Input className='bg-dark-secondary text-white p-3 outline-none border-none rounded-md'  type="file" id="image" name='image' />
-      </div>
-      <Button type="submit" className='bg-zinc-600'>Submit</Button>
-    </form>
-  )
+    });
+    const router = useRouter()
+    const [isLoading, setIsLoading] = React.useState<boolean>(false)
+
+    const onsubmit = async (data: z.infer<typeof PostValidation>) => {
+        try {
+            const user = await getUserByToken()
+            const id = user?.data?._id
+            const caption = data.caption
+            const tags = data.tags
+            const location = data.location
+            setIsLoading(true)
+            const img = await uploadImage(data.image)
+            const res = await createPost(id, { caption, tags, location, image: img.image_url, imageId: img.public })
+            setIsLoading(false)
+            if(res.status===200){
+                form.reset()
+                router.push('/')
+            }
+        } catch (error:any) {
+            console.log(error.message)
+        }
+    };
+    return (
+        <Form {...form}>
+            <div className="sm:w-420 flex-center flex-col">
+                
+                
+                <form
+                    onSubmit={form.handleSubmit(onsubmit)}
+                    className="flex flex-col gap-5 w-full mt-4">
+
+                    {/* // will also add for phone number  */}
+
+                    <FormField
+                        control={form.control}
+                        name="caption"
+                        render={({ field }) => (
+                            <FormItem>
+
+                                <FormControl>
+                                    <Textarea rows={7} placeholder="Caption..." className="bg-gray-800 border-none text-lg p-2" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="image"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <FileUploader fieldChange={field.onChange} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                            <FormItem>
+
+                                <FormControl>
+                                    <Input type="text" placeholder="Location..." className="bg-gray-800 border-none text-lg p-2" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+
+
+                    <FormField
+                        control={form.control}
+                        name="tags"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <Input type="text" placeholder="Tags..." className="bg-gray-800 border-none text-lg p-2" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+
+
+
+                    <Button type="submit" className="shad-button_primary">
+
+                        {isLoading ? <Loader /> : "Create Post"}
+
+                    </Button>
+
+
+                </form>
+            </div>
+        </Form>
+    )
 }
 
 export default PostForm

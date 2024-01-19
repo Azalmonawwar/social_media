@@ -3,9 +3,9 @@ import { v2 as cloudinary } from 'cloudinary';
 
 
 cloudinary.config({ 
-    cloud_name: 'dctrpu6tf', 
-    api_key: '582452511596592', 
-    api_secret: '9h49bQZ2-fdlvHF9HjjBCuR4M8Q' 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET 
   });
 
   type ResProps = {
@@ -27,26 +27,25 @@ cloudinary.config({
     access_mode: string;
     original_filename: string;
   }
-export async function uploadPic(file: any) {
+
+export async function uploadImage(base64url:string){
     try {
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = new Uint8Array(arrayBuffer);
-        const res:ResProps = await new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream({
-            tags: ['nextjs-server-actions-upload-sneakers']
-          }, function (error :any, result:any) {
-            if (error) {
-              reject(error);
-              return;
-            }
-            resolve(result);
-          })
-          .end(buffer);
-        } 
-        );
-        return res?.secure_url;
+        const res:ResProps = await cloudinary.uploader.upload(base64url)
+        const image = {
+          public : res.public_id,
+          image_url: res.secure_url
+        }
+
+        return JSON.parse(JSON.stringify(image))
+    } catch (error:any) {
+      console.log(error.message)
+    }
 }
-catch (error:any)  {
-        console.log(error)
+export async function deleteImage(imageId:string){
+    try {
+        const res:ResProps = await cloudinary.uploader.destroy(imageId)
+        console.log(res)
+    } catch (error:any) {
+      console.log(error.message)
     }
 }
