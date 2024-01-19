@@ -8,7 +8,7 @@ const CommentForm = ({user,post}:{user:string,post:string}) => {
     const handleSubmit=async(e:FormEvent)=>{
         e.preventDefault()
         const response = await createCommentByPostId(post,user,comment);
-        
+        setComment("")
     }
   return (
     <form className='flex' onSubmit={handleSubmit}>
