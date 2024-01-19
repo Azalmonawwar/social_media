@@ -15,7 +15,7 @@ const page = async () => {
         <div>
           <Image
             src={data?.avatar || "/icons/user.svg"}
-            alt={data.name}
+            alt={data?.name}
             height={300}
             width={300}
             className='lg:h-[150px] lg:w-[150px] md:h-[100px] md:w-[100px] h-[80px] w-[80px] rounded-full' />

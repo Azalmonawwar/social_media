@@ -5,7 +5,7 @@ import React from 'react'
 
 const page = async() => {
   const {data} = await getUserByToken()
-  if(data.onboarding){
+  if(data?.onboarding){
     redirect('/')
   }
   // console.log(data.email)

@@ -14,7 +14,7 @@ const Home = async() =>{
       <h1 className="text-2xl md:text-3xl  font-bold text-center ml-2">Home Feed</h1>
       <Suspense fallback={<Loader/>}>
       {
-        data.data.map((item:IPost, index:number) => (
+        data?.data?.map((item:IPost, index:number) => (
           
           <PostCard
             key={index}

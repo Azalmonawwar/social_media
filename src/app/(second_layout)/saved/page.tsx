@@ -28,7 +28,7 @@ const page = async() => {
       </div>
             </div>
          {
-          (savedPost.data ===null || savedPost.data?.post.length === 0)  &&
+          (savedPost?.data ===null || savedPost?.data?.post.length === 0)  &&
           <div className='self-center sm:h-[400px] h-[350px] text-2xl font-semibold flex flex-col gap-2 items-center justify-center'>
             <Image 
             src={'/icons/save.svg'}
