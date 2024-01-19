@@ -5,6 +5,7 @@ import { IPost } from "@/lib/types";
 import { connectToDatabase } from "@/lib/db/connect";
 import Comment from "@/lib/db/models/comment.models";
 import { revalidatePath } from "next/cache";
+import { deleteImage } from "../utils/uploadPic";
 
 //create a post
 export async function createPost(
@@ -177,17 +178,18 @@ export async function deletePostById(postId: string, userId: string) {
       return JSON.parse(JSON.stringify(response));
     }
 
+    const res = await deleteImage(post.imageId)
     const index = userExists.posts.indexOf(postId)
     if(index!==-1){
       userExists.posts.slice(index,1)
     }
     await userExists.save();
-    await post.remove();
+    const del = await Post.deleteOne({_id:postId});
 
     const response = {
       status: 200,
       message: "Post deleted successfully",
-      data: post,
+      data: del,
     };
     revalidatePath('/')
     revalidatePath('/profile')

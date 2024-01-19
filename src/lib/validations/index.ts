@@ -29,8 +29,8 @@ export const OnBoardValidation = z.object({
 
   
 export const PostValidation = z.object({
-  caption: z.string().min(8, { message: "Caption must be at least 8 characters." }),
+  caption: z.string().min(2, { message: "Caption must be at least 8 characters." }),
   tags: z.string().min(2, { message: "Tags must be at least 4 characters." }),
-  location: z.string().min(8, { message: "Location must be at least 3 characters." }),
+  location: z.string().min(3, { message: "Location must be at least 3 characters." }),
   image: z.string()
 });

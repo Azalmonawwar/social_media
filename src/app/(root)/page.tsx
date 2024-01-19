@@ -12,18 +12,18 @@ const Home = async() =>{
   return (
     <section className='flex flex-col items-start gap-10  py-2 md:py-16 mb-[80px]  md:px-8 lg:ml-[270px] md:ml-[100px] md:mr-0 sl:mr-[300px] '>
       <h1 className="text-2xl md:text-3xl  font-bold text-center ml-2">Home Feed</h1>
-      <Suspense fallback={<Loader/>}>
       {
         data?.data?.map((item:IPost, index:number) => (
           
+          <Suspense key={index} fallback={<Loader/>}>
           <PostCard
-            key={index}
+            
             user= {user?.data?._id}
             post={item}
             />
+      </Suspense>
         ))
       }
-      </Suspense>
     </section>
   )
 }

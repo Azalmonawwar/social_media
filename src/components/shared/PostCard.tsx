@@ -1,12 +1,13 @@
 import { IPost } from '@/lib/types'
 import Link from 'next/link'
-import React from 'react'
+import React, { Suspense } from 'react'
 import Image from 'next/image'
 import { timeAgo } from '@/lib/utils'
 
 import Poststatus from './Poststatus'
 import { getSaved } from '@/lib/actions/saved.action'
 import CommentForm from '../forms/CommentForm'
+import Loader from './Loader'
 const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
   const saved = await getSaved(user);
   return (
@@ -20,7 +21,7 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
                 width={100}
                 src={
                   post.user?.avatar ||
-                  "/assets/icons/profile-placeholder.svg"
+                  "/icons/profile-placeholder.svg"
                 }
                 alt="creator"
                 className="w-12 h-12 rounded-full"
@@ -43,25 +44,15 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
             </div>
           </div>
 
-          <Link
-            href={`/update-post/${post?._id}`}
-            className={`${user !== post?.user?._id && "hidden"}`}>
-            <Image
-              src={"/icons/dots.png"}
-              alt="edit"
-              width={48}
-              height={48}
-              className='invert'
-            />
+          
+            
 
-
-          </Link>
         </div>
 
         <Link href={`/posts/${post?._id}`} className="">
 
           <div className={`  items-center overflow-hidden md:h-[500px] md:w-auto mb-5`}>
-
+                <Suspense fallback={<Loader/>}>
             <Image
               width={600}
               height={600}
@@ -69,6 +60,7 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
               alt="post image"
               className="   object-contain w-full  md:h-full  "
             />
+            </Suspense>
           </div>
         </Link>
         <Poststatus likes={post?.likes?.length} like={post?.likes} saved={saved?.data?.post} postId={post._id} userId={user} />

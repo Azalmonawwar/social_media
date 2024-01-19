@@ -23,7 +23,7 @@ const PostForm = () => {
     });
     const router = useRouter()
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
-
+    
     const onsubmit = async (data: z.infer<typeof PostValidation>) => {
         try {
             const user = await getUserByToken()
@@ -31,12 +31,14 @@ const PostForm = () => {
             const caption = data.caption
             const tags = data.tags
             const location = data.location
+            
             setIsLoading(true)
             const img = await uploadImage(data.image)
             const res = await createPost(id, { caption, tags, location, image: img.image_url, imageId: img.public })
             setIsLoading(false)
+            
+            form.reset()
             if(res.status===200){
-                form.reset()
                 router.push('/')
             }
         } catch (error:any) {
@@ -113,7 +115,7 @@ const PostForm = () => {
 
 
 
-                    <Button type="submit" className="shad-button_primary">
+                    <Button type="submit" className="shad-button_primary" disabled={isLoading}>
 
                         {isLoading ? <Loader /> : "Create Post"}
 

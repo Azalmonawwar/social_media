@@ -2,10 +2,14 @@ import Card from '@/components/cards/Card'
 import Container from '@/components/shared/Container'
 import { getSavedPosts } from '@/lib/actions/saved.action'
 import { getUserByToken } from '@/lib/actions/user.action'
+import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-
+export const metadata: Metadata = {
+  title: 'Saved Post • Metagram',
+  description: 'MetaGram is a social media platform for sharing photos and videos with friends and family.',
+}
 const page = async() => {
   const {data} = await getUserByToken()
   const savedPost = await getSavedPosts(data?._id)
