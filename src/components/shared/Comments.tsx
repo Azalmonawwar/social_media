@@ -14,9 +14,9 @@ const Comments = ({ comment, user }: any) => {
   return (
     <div className="md:mx-auto flex flex-row justify-between mb-1 mx-2 w-full  md:w-[50%] h-[100%]">
       <div className="flex gap-2">
-        <div className='h-8 w-8 rounded-full overflow-hidden'>
+        <div className='h-8 w-8 rounded-full overflow-hidden bg-white'>
 
-        <Image src={comment.user.avatar} height={24} width={24} alt={comment.text} className="" />
+        <Image src={comment.user.avatar} height={24} width={24} alt={comment.text} className='object-contain h-full w-full' />
         </div>
 
         <div className="flex flex-col gap-1">

@@ -12,7 +12,7 @@ const Rightbar = async () => {
 
 
         <div className="flex items-center gap-3 mb-5">
-          <Link href={`/profile/${data?._id}`}>
+          <Link href={`/profile/${data?._id}`} className="w-12 lg:h-12 rounded-full bg-white"  >
             <Image
               height={100}
               width={100}
@@ -21,7 +21,7 @@ const Rightbar = async () => {
                 "/assets/icons/profile-placeholder.svg"
               }
               alt="creator"
-              className="w-12 lg:h-12 rounded-full"
+              className='object-contain h-full w-full'
             />
           </Link>
 

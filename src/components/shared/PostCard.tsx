@@ -15,7 +15,7 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
       <div className="   mx-auto flex flex-col w-full  md:w-[50%] h-[100%] ">
         <div className="flex justify-between items-center mx-2 md:mx-0">
           <div className="flex items-center gap-3 mb-2">
-            <Link href={`/profile/${post?.user?._id}`} className="w-12 h-12 rounded-full overflow-hidden">
+            <Link href={`/profile/${post?.user?._id}`} className="w-12 h-12 rounded-full overflow-hidden bg-white">
               <Image
                 height={100}
                 width={100}
@@ -24,7 +24,7 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
                   "/icons/profile-placeholder.svg"
                 }
                 alt="creator"
-                
+                className='object-contain h-full w-full'
               />
             </Link>
 

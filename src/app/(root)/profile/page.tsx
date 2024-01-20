@@ -14,12 +14,13 @@ const page = async () => {
   return (
     <Wrapper>
       <div className=' py-5 px-4 xl:w-[60%] w-full mx-auto flex sm:justify-center md:gap-24 gap-5 '>
-        <div className='lg:h-[150px] lg:w-[150px] md:h-[100px] md:w-[100px] h-[80px] w-[80px] rounded-full overflow-hidden'>
+        <div className='bg-white lg:h-[150px] lg:w-[150px] md:h-[100px] md:w-[100px] h-[80px] w-[80px] rounded-full overflow-hidden '>
           <Image
             src={data?.avatar || "/icons/user.svg"}
             alt={data?.name}
-            height={300}
-            width={300}
+            height={200}
+            width={200}
+            className='object-contain h-full w-full'
              />
         </div>
         <div className='flex flex-col gap-2'>
