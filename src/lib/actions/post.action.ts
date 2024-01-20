@@ -418,6 +418,7 @@ export async function deleteCommentByPostId(
       message: "Comment deleted successfully",
       data: post.comments,
     };
+    revalidatePath('/post')
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
