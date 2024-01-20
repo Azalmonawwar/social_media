@@ -532,7 +532,7 @@ export const sendResetPasswordLink = async (email: string) => {
       <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5;">
       <h2 style="color: #333;">Email Verification</h2>
       <p>Dear User,</p>
-      <a href=${`http://localhost:3000/reset-password?token=${token}`}>Click here to reset password</a>
+      <a href=${`https://metagram-beta.vercel.app/reset-password?token=${token}`}>Click here to reset password</a>
       
       <p>Thank you for using our service.</p>
       <div style="padding: 10px; background-color: #d3d3d3; margin-top: 20px;">

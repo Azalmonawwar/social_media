@@ -411,7 +411,7 @@ export async function deleteCommentByPostId(
       .indexOf(commentId);
     post.comments.splice(removeIndex, 1);
     await post.save();
-    await comment.remove();
+    const deleteComment = await Comment.deleteOne({_id:commentId});
     await userExists.comments.remove(commentId);
     const response = {
       status: 200,

@@ -12,7 +12,7 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
   const saved = await getSaved(user);
   return (
     <>
-      <div className="   mx-auto flex flex-col   md:w-[50%] h-[100%] ">
+      <div className="   mx-auto flex flex-col w-full  md:w-[50%] h-[100%] ">
         <div className="flex justify-between items-center mx-2 md:mx-0">
           <div className="flex items-center gap-3 mb-2">
             <Link href={`/profile/${post?.user?._id}`}>
@@ -51,11 +51,11 @@ const PostCard = async ({ post, user }: { post: IPost, user: string }) => {
 
         <Link href={`/posts/${post?._id}`} className="">
 
-          <div className={`  items-center overflow-hidden md:h-[500px] md:w-auto mb-5`}>
+          <div className={`  overflow-hidden w-full md:h-[500px] md:w-auto mb-5`}>
                 <Suspense fallback={<Loader/>}>
             <Image
-              width={600}
-              height={600}
+              width={400}
+              height={400}
               src={post?.image || "/icons/profile-placeholder.svg"}
               alt="post image"
               className="   object-contain w-full  md:h-full  "

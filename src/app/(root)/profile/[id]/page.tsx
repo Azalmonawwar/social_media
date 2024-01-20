@@ -1,6 +1,7 @@
-import Container from '@/components/shared/Container'
+
 import FollowBtn from '@/components/shared/FollowBtn'
-import { Button } from '@/components/ui/button'
+import Wrapper from '@/components/shared/Wrapper'
+
 import { getUserById, getUserByToken} from '@/lib/actions/user.action'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -13,7 +14,7 @@ const page = async ({params}:any) => {
   const isFollowing = data.followers.includes(user?.data?._id)
   // console.log(isFollowing)
   return (
-    <Container>
+    <Wrapper>
       <div className=' py-5 px-4 xl:w-[60%] w-full mx-auto flex sm:justify -center md:gap-24 gap-5 '>
         <div>
           <Image
@@ -109,7 +110,7 @@ const page = async ({params}:any) => {
           </div>
         </div>
       </div>
-    </Container>
+    </Wrapper>
   )
 }
 

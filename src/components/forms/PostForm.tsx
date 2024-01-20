@@ -63,7 +63,7 @@ const PostForm = () => {
                             <FormItem>
 
                                 <FormControl>
-                                    <Textarea rows={7} placeholder="Caption..." className="bg-gray-800 border-none text-lg p-2" {...field} />
+                                    <Textarea rows={4} placeholder="Caption..." className="bg-gray-800 border-none text-lg p-2" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

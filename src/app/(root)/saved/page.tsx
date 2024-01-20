@@ -1,5 +1,6 @@
 import Card from '@/components/cards/Card'
 import Container from '@/components/shared/Container'
+import Wrapper from '@/components/shared/Wrapper'
 import { getSavedPosts } from '@/lib/actions/saved.action'
 import { getUserByToken } from '@/lib/actions/user.action'
 import { Metadata } from 'next'
@@ -15,7 +16,7 @@ const page = async() => {
   const savedPost = await getSavedPosts(data?._id)
   
   return (
-    <Container>
+    <Wrapper>
       <h2 className='text-2xl font-bold'>
         Saved Post
       </h2>
@@ -44,7 +45,7 @@ const page = async() => {
             <p className='text-center text-base font-normal text-gray-400'>All the post and items you've saved will<br/>show up here</p>
           </div>
          }
-    </Container>
+    </Wrapper>
   )
 }
 

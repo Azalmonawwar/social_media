@@ -1,6 +1,7 @@
 import Card from '@/components/cards/Card'
 import Container from '@/components/shared/Container'
 import Posts from '@/components/shared/Posts'
+import Wrapper from '@/components/shared/Wrapper'
 import { Button } from '@/components/ui/button'
 import { getUserByToken } from '@/lib/actions/user.action'
 import Image from 'next/image'
@@ -11,7 +12,7 @@ const page = async () => {
   const { data } = await getUserByToken()
 
   return (
-    <Container>
+    <Wrapper>
       <div className=' py-5 px-4 xl:w-[60%] w-full mx-auto flex sm:justify-center md:gap-24 gap-5 '>
         <div>
           <Image
@@ -99,7 +100,7 @@ const page = async () => {
           </div>
         </div>
       </div>
-    </Container>
+    </Wrapper>
   )
 }
 

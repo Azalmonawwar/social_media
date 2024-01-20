@@ -4,6 +4,7 @@ import { IPost } from '@/lib/types'
 import { getUserByToken } from '@/lib/actions/user.action'
 import { Suspense } from 'react'
 import Loader from '@/components/shared/Loader'
+import Rightbar from '@/components/shared/Rightbar'
 
 const Home = async() =>{
 
@@ -24,6 +25,7 @@ const Home = async() =>{
       </Suspense>
         ))
       }
+      <Rightbar/>
     </section>
   )
 }
