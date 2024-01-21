@@ -235,7 +235,7 @@ export const loginUser = async (user: z.infer<typeof LoginValidation>) => {
         phone: existingUser.phone,
       },
       process.env.JWT_SECRET as string,
-      { expiresIn: "1d" }
+      { expiresIn: "28d" }
     );
 
     // if token is not created
@@ -252,7 +252,7 @@ export const loginUser = async (user: z.infer<typeof LoginValidation>) => {
       httpOnly: true,
       secure: process.env.NODE_ENV !== "development",
       sameSite: "strict",
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 28), // 7 days
       path: "/",
     });
 

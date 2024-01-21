@@ -17,7 +17,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
 
-
+  // if (!isPublicPath && !token) {
+  //   const isAuth = await getUserByToken()
+  //   if(isAuth.status === false){
+  //   return NextResponse.redirect(new URL("/login", request.nextUrl));
+      
+  //   }
+  // }
 
 
 }
