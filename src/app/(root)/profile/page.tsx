@@ -1,16 +1,17 @@
-import Card from '@/components/cards/Card'
-import Container from '@/components/shared/Container'
+
 import Posts from '@/components/shared/Posts'
+import ProfileStats from '@/components/shared/ProfileStats'
 import Wrapper from '@/components/shared/Wrapper'
 import { Button } from '@/components/ui/button'
-import { getUserByToken } from '@/lib/actions/user.action'
+import { getFollowingAndFollowers, getUserByToken } from '@/lib/actions/user.action'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
 const page = async () => {
   const { data } = await getUserByToken()
-
+  const followers = await getFollowingAndFollowers(data?._id)
+  
   return (
     <Wrapper>
       <div className=' py-5 px-4 xl:w-[60%] w-full mx-auto flex sm:justify-center md:gap-24 gap-5 '>
@@ -70,20 +71,7 @@ const page = async () => {
 
       <hr className='xl:w-[60%] w-full mx-auto block md:hidden' />
 
-      <div className='flex  gap-2 md:hidden  items-center justify-around text-xs  w-full'>
-        <div className='flex flex-col gap-1 items-center'>
-          <p className='font-semibold '>{data?.posts?.length}</p>
-          <p>Posts</p>
-        </div>
-        <div className='flex flex-col gap-1 items-center'>
-          <p className='font-semibold '>{data?.followers?.length}</p>
-          <p>Followers</p>
-        </div>
-        <div className='flex flex-col gap-1 items-center'>
-          <p className='font-semibold '>{data?.following?.length}</p>
-          <p>Following</p>
-        </div>
-      </div>
+      <ProfileStats post={data?.posts?.length} followers={followers?.data?.followers} following={followers?.data?.following}/>
       <hr className='xl:w-[60%] w-full mx-auto' />
       {/* //mobile view closed  */}
       <div className='w-full'>

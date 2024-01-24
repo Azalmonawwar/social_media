@@ -689,11 +689,17 @@ export const deleteUser = async (id: string) => {
 };
 
 //get following user
-export const getFollowing = async (id: string) => {
+export const getFollowingAndFollowers = async (id: string) => {
   try {
     await connectToDatabase();
     // check if user exists
-    const existingUser = await User.findById(id).populate("following");
+    const existingUser = await User.findById(id).populate({
+      path: "following",
+      select: "name _id avatar",
+    }).populate({
+      path: "followers",
+      select: "name _id avatar",
+    }).select("following followers name");
 
     if (!existingUser) {
       const response = {
@@ -707,7 +713,7 @@ export const getFollowing = async (id: string) => {
     const response = {
       status: true,
       message: "Following fetched successfully",
-      data: existingUser.following,
+      data: existingUser,
     };
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
@@ -720,38 +726,6 @@ export const getFollowing = async (id: string) => {
   }
 };
 
-// get followers of a user
-export const getFollowers = async (id: string, path: string) => {
-  try {
-    await connectToDatabase();
-    // check if user exists
-    const existingUser = await User.findById(id).populate("followers");
-
-    if (!existingUser) {
-      const response = {
-        status: false,
-        message: "User does not exists",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
-
-    // return followers
-    const response = {
-      status: true,
-      message: "Followers fetched successfully",
-      data: existingUser.followers,
-    };
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(response));
-  } catch (error: any) {
-    console.log(error);
-    const response = {
-      status: false,
-      message: error.message,
-    };
-    return JSON.parse(JSON.stringify(response));
-  }
-};
 // get all posts of a user
 export const getPosts = async (id: string, path: string) => {
   try {
