@@ -50,7 +50,7 @@ Follow these steps to run Metagram locally:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/metagram.git
+   git clone https://github.com/Azalmonawwar/social_media.git
    ```
 
 2. Install dependencies:
@@ -83,4 +83,4 @@ Follow these steps to run Metagram locally:
 ## Contributing
 
 We welcome contributions from the community! Feel free to open issues for bug reports or new feature suggestions.
-```
+
