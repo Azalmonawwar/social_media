@@ -10,9 +10,9 @@ import { revalidatePath } from "next/cache";
 import nodemailer from "nodemailer";
 import Post from "@/lib/db/models/post.models";
 import { LoginValidation, SignupValidation } from "../validations";
-import { sendMail } from "../utils/sendVerficationMail";
+// import { sendMail } from "../utils/sendVerficationMail";
 import bcrypt from "bcryptjs";
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
+
 export const createUser = async (user: z.infer<typeof SignupValidation>) => {
   try {
     await connectToDatabase();
@@ -93,16 +93,16 @@ export const createUser = async (user: z.infer<typeof SignupValidation>) => {
       return JSON.parse(JSON.stringify(response));
     }
     //send verification mail
-    const mail = await sendMail(
-      saveduser.email,
-      saveduser.name,
-      verificationToken
-    );
+    // const mail = await sendMail(
+    //   saveduser.email,
+    //   saveduser.name,
+    //   verificationToken
+    // );
 
     // return new user
     const response = {
       status: true,
-      message: "Account created successfully, Please verify your email",
+      message: "Account created successfully",
       data: saveduser,
     };
     return JSON.parse(JSON.stringify(response));
@@ -217,14 +217,14 @@ export const loginUser = async (user: z.infer<typeof LoginValidation>) => {
       return JSON.parse(JSON.stringify(response));
     }
 
-    // if user is not verified
-    if (!existingUser.isVerified) {
-      const response = {
-        status: false,
-        message: "Please verify your email",
-      };
-      return JSON.parse(JSON.stringify(response));
-    }
+    // if user is not verified might uncomment later on production 
+    // if (!existingUser.isVerified) {
+    //   const response = {
+    //     status: false,
+    //     message: "Please verify your email",
+    //   };
+    //   return JSON.parse(JSON.stringify(response));
+    // }
     //create token
     const token = jwt.sign(
       {
