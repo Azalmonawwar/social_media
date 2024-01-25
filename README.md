@@ -1,5 +1,5 @@
 
-```markdown
+
 # Metagram Social Media App
 
 ![Metagram Logo](/public/icons/logo.png)
