@@ -1,4 +1,5 @@
 
+import PostStatus2 from '@/components/shared/PostStatus2'
 import Posts from '@/components/shared/Posts'
 import ProfileStats from '@/components/shared/ProfileStats'
 import Wrapper from '@/components/shared/Wrapper'
@@ -34,20 +35,8 @@ const page = async () => {
               <Button><Link href={'/saved'}>View Saved</Link></Button>
             </div>
           </div>
-          <div className='md:flex md:gap-8 gap-2 hidden  items-center text-[18px] mt-2'>
-            <div className='flex gap-2 items-center'>
-              <p className='text-blue-500 '>{data?.posts?.length}</p>
-              <p>Posts</p>
-            </div>
-            <div className='flex gap-2 items-center'>
-              <p className='text-blue-500 '>{data?.followers?.length}</p>
-              <p>Followers</p>
-            </div>
-            <div className='flex gap-2 items-center'>
-              <p className='text-blue-500 '>{data?.following?.length}</p>
-              <p>Following</p>
-            </div>
-          </div>
+      <PostStatus2 post={data?.posts?.length} followers={followers?.data?.followers} following={followers?.data?.following}/>
+         
 
 
           <div className='mt-5 hidden md:block'>

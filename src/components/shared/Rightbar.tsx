@@ -37,7 +37,7 @@ const Rightbar = async () => {
         <div className=''>
           <h2 className='text-xl font-semibold'>Top Creators</h2>
             <div className='flex  flex-col  gap-4'>
-              <Link href={`/profile/${data?._id}`} className='flex items-center gap-4'>
+              <Link href={`/profile/${data?._id}`} className='flex rounded-full items-center gap-4'>
                 <Image
                   height={100}
                   width={100}
