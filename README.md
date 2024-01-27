@@ -55,7 +55,7 @@ Follow these steps to run Metagram locally:
 
 2. Install dependencies:
    ```bash
-   cd metagram
+   cd social_media
    npm install
    ```
 
