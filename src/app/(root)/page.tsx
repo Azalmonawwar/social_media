@@ -5,6 +5,7 @@ import { getUserByToken } from '@/lib/actions/user.action'
 import { Suspense } from 'react'
 import Loader from '@/components/shared/Loader'
 import Rightbar from '@/components/shared/Rightbar'
+import Postskeleten from '@/components/shared/Postskeleton'
 
 const Home = async() =>{
 
@@ -16,7 +17,7 @@ const Home = async() =>{
       {
         data?.data?.map((item:IPost, index:number) => (
           
-          <Suspense key={index} fallback={<Loader/>}>
+          <Suspense key={index} fallback={<Postskeleten/>}>
           <PostCard
             
             user= {user?.data?._id}
