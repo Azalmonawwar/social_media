@@ -16,16 +16,32 @@ const ProfileStats = ({post,followers,following}:any) => {
           <p>Followers</p>
         </div>
         
+        {isFollowerOpen && <div className='flex absolute flex-col gap-1 items-center overflow-y-scroll h-[50%] w-[70%] bg-gray-900 rounded-lg p-4'>
+          <p className="absolute top-0 right-0 p-4 cursor-pointer" onClick={()=>setIsFollowerOpen(!isFollowerOpen)}>X</p>
         {
-            isFollowerOpen && followers?.map((user:any) => (
-                <div className='flex flex-col gap-1 items-center'>
-                    <p className='font-semibold '>{user?.name}</p>
-                </div>
+             followers?.map((user:any) => (
+              <>
+                    <p className='font-semibold  py-2 text-base'>{user?.name}</p>
+                    </>
             ))
           }
-        <div className='flex flex-col gap-1 items-center'>
+                </div>
+        }
+        {isFollowingOpen && <div className='flex absolute flex-col gap-1 items-center overflow-y-scroll h-[50%] w-[70%] bg-gray-900 rounded-lg p-4'>
+          <p className="absolute top-0 right-0 p-4 cursor-pointer" onClick={()=>setIsFollowingOpen(!isFollowingOpen)}>X</p>
+        {
+             following?.map((user:any) => (
+              <>
+                    <p className='font-semibold  py-2 text-base'>{user?.name}</p>
+                    </>
+            ))
+          }
+                </div>
+        }
+        <div className='flex flex-col gap-1 items-center' onClick={()=>setIsFollowingOpen(!isFollowingOpen)}>
           <p className='font-semibold '>{following?.length}</p>
           <p>Following</p>
+          
         </div>
       </div>
   )

@@ -8,7 +8,6 @@ import Rightbar from '@/components/shared/Rightbar'
 import Postskeleten from '@/components/shared/Postskeleton'
 
 const Home = async() =>{
-
   const data = await getAllPosts()
   const user = await getUserByToken() 
   return (

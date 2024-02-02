@@ -13,15 +13,15 @@ const Postskeleten = () => {
             </div>
 
             <div className="flex flex-col ">
-              <p className="text-[16px] font-medium leading-[140%] lg:text-[18px] lg:font-bold  text-white first-letter:capitalize">
+              <p className="text-[16px] font-medium leading-[140%] lg:text-[18px] lg:font-bold  w-[50px] h-2 bg-gray-300 text-white first-letter:capitalize">
                 
               </p>
               <div className="flex justify-center text-xs  items-center gap-2 whitespace-nowrap text-gray-400 ">
-                <p >
+                <p className="w-12 h-2 bg-gray-300" >
                   
                 </p>
                 •
-                <p className="capitalize whitespace-nowrap">
+                <p className="capitalize whitespace-nowrap w-12 h-2 bg-gray-300">
                   
                 </p>
               </div>
@@ -46,7 +46,7 @@ const Postskeleten = () => {
         </div>
         {/* <Poststatus likes={post?.likes?.length} like={post?.likes} saved={saved?.data?.post} postId={post._id} userId={user} /> */}
         <div className="text-gray-300 text-sm mx-2 md:mx-0 mt-4">
-          <p className='first-letter:capitalize'><span className='text-zinc-500'> more</span></p>
+          <p className='first-letter:capitalize w-full h-2 bg-gray-600'><span className='text-zinc-500'> more</span></p>
           <ul className="flex gap-1 mt-2">
             
           </ul>
