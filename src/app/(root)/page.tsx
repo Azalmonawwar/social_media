@@ -3,7 +3,6 @@ import PostCard from '@/components/shared/PostCard'
 import { IPost } from '@/lib/types'
 import { getUserByToken } from '@/lib/actions/user.action'
 import { Suspense } from 'react'
-import Loader from '@/components/shared/Loader'
 import Rightbar from '@/components/shared/Rightbar'
 import Postskeleten from '@/components/shared/Postskeleton'
 
