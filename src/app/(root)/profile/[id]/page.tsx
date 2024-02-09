@@ -3,15 +3,21 @@ import FollowBtn from '@/components/shared/FollowBtn'
 import Wrapper from '@/components/shared/Wrapper'
 
 import { getUserById, getUserByToken} from '@/lib/actions/user.action'
+import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
 const page = async ({params}:any) => {
   const{id} = params;
-  const { data } = await getUserById(id)
-  const user = await getUserByToken()     
-  const isFollowing = data.followers.includes(user?.data?._id)
+  const { data } = await getUserById(id);
+  const user = await getUserByToken();     
+
+  // redirect to their profile page if user is click to their profile 
+  if(user?.data?._id===id){
+    return redirect('/profile')
+  }
+  const isFollowing = data.followers.includes(user?.data?._id);
   // console.log(isFollowing)
   return (
     <Wrapper>
