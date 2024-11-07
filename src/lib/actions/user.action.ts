@@ -217,7 +217,7 @@ export const loginUser = async (user: z.infer<typeof LoginValidation>) => {
       return JSON.parse(JSON.stringify(response));
     }
 
-    // if user is not verified might uncomment later on production 
+    // if user is not verified might uncomment later on production
     // if (!existingUser.isVerified) {
     //   const response = {
     //     status: false,
@@ -277,8 +277,8 @@ export const getUserByToken = async () => {
   try {
     await connectToDatabase();
     // check if token is provided
-    const token: any= cookies().get("token");
-    const decoedToken :any = jwt.verify(
+    const token: any = cookies().get("token");
+    const decoedToken: any = jwt.verify(
       token.value,
       process.env.JWT_SECRET as string
     );
@@ -693,13 +693,52 @@ export const getFollowingAndFollowers = async (id: string) => {
   try {
     await connectToDatabase();
     // check if user exists
-    const existingUser = await User.findById(id).populate({
-      path: "following",
-      select: "name _id avatar",
-    }).populate({
-      path: "followers",
-      select: "name _id avatar",
-    }).select("following followers name");
+    const existingUser = await User.findById(id)
+      .populate({
+        path: "following",
+        select: "name _id avatar",
+      })
+      .populate({
+        path: "followers",
+        select: "name _id avatar",
+      })
+      .select("following followers name");
+
+    if (!existingUser) {
+      const response = {
+        status: false,
+        message: "User does not exists",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    // return following
+    const response = {
+      status: true,
+      message: "Following fetched successfully",
+      data: existingUser,
+    };
+    return JSON.parse(JSON.stringify(response));
+  } catch (error: any) {
+    console.log(error);
+    const response = {
+      status: false,
+      message: error.message,
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+};
+
+export const getFollowers = async (id: string) => {
+  try {
+    await connectToDatabase();
+    // check if user exists
+    const existingUser = await User.findById(id)
+      .populate({
+        path: "followers",
+        select: "name _id avatar",
+      })
+      .select("followers name");
 
     if (!existingUser) {
       const response = {
@@ -784,13 +823,14 @@ export const toggleFollow = async (
     if (isFollowing) {
       // Unfollow the user
 
-      const indexOfFollowing = userPerformingAction.following.indexOf(
-        userToFollowId
-      );
+      const indexOfFollowing =
+        userPerformingAction.following.indexOf(userToFollowId);
       if (indexOfFollowing !== -1) {
         userPerformingAction.following.splice(indexOfFollowing, 1);
       }
-      const indexOfFollower = userToFollow.followers.indexOf(userPerformingActionId);
+      const indexOfFollower = userToFollow.followers.indexOf(
+        userPerformingActionId
+      );
       if (indexOfFollower !== -1) {
         userToFollow.followers.splice(indexOfFollower, 1);
       }
@@ -816,7 +856,7 @@ export const toggleFollow = async (
 
     const response = {
       status: true,
-      data:"follow sucessfully"
+      data: "follow sucessfully",
     };
 
     revalidatePath("/profile");

@@ -1,60 +1,65 @@
 export const sidebarLinks = [
-    {
-      imgURL: "/icons/home.svg",
-      route: "/",
-      label: "Home",
-    },
-    {
-      imgURL: "/icons/wallpaper.svg",
-      route: "/explore",
-      label: "Explore",
-    },
-    {
-      imgURL: "/icons/people.svg",
-      route: "/people",
-      label: "People",
-    },
-    {
-      imgURL: "/icons/save.svg",
-      route: "/saved",
-      label: "Saved",
-    },
-    {
-      imgURL: "/icons/gallery-add.svg",
-      route: "/create-post",
-      label: "Create Post",
-    },
-    {
-      imgURL: "/icons/user.svg",
-      route: "/profile",
-      label: "Profile",
-    }
-  ];
-  
-  export const bottombarLinks = [
-    {
-      imgURL: "/icons/home.svg",
-      route: "/",
-      label: "Home",
-    },
-    {
-      imgURL: "/icons/wallpaper.svg",
-      route: "/explore",
-      label: "Explore",
-    },
-    {
-      imgURL: "/icons/create.svg",
-      route: "/create-post",
-      label: "Create",
-    },
-    {
-      imgURL: "/icons/save.svg",
-      route: "/saved",
-      label: "Saved",
-    },
-    {
-      imgURL: "/icons/user.svg",
-      route: "/profile",
-      label: "Profile",
-    }
-  ];
+  {
+    imgURL: "/icons/home.svg",
+    route: "/",
+    label: "Home",
+  },
+  {
+    imgURL: "/icons/wallpaper.svg",
+    route: "/explore",
+    label: "Explore",
+  },
+  {
+    imgURL: "/icons/people.svg",
+    route: "/people",
+    label: "People",
+  },
+  {
+    imgURL: "/icons/chat.svg",
+    route: "/message",
+    label: "Message",
+  },
+  {
+    imgURL: "/icons/save.svg",
+    route: "/saved",
+    label: "Saved",
+  },
+  {
+    imgURL: "/icons/gallery-add.svg",
+    route: "/create-post",
+    label: "Create Post",
+  },
+  {
+    imgURL: "/icons/user.svg",
+    route: "/profile",
+    label: "Profile",
+  },
+];
+
+export const bottombarLinks = [
+  {
+    imgURL: "/icons/home.svg",
+    route: "/",
+    label: "Home",
+  },
+  {
+    imgURL: "/icons/wallpaper.svg",
+    route: "/explore",
+    label: "Explore",
+  },
+  {
+    imgURL: "/icons/create.svg",
+    route: "/create-post",
+    label: "Create",
+  },
+  {
+    imgURL: "/icons/save.svg",
+    route: "/saved",
+    label: "Saved",
+  },
+  {
+    imgURL: "/icons/user.svg",
+    route: "/profile",
+    label: "Profile",
+  },
+];
