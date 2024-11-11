@@ -14,7 +14,7 @@ const MessageList = async () => {
             <ul className='h-full w-[240px] mt-[30px]'>
                 {
                     followers?.data?.following.map((follower: any) => (
-                        <Person follower={follower} key={follower._id} user={data._id} />
+                        <Person follower={follower} key={follower._id} user={data?._id} />
                     ))
                 }
             </ul>
