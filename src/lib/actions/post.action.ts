@@ -13,7 +13,7 @@ export async function createPost(
   post: {
     caption: FormDataEntryValue | null;
     image: string | undefined;
-    imageId:string | undefined
+    imageId: string | undefined;
     tags: FormDataEntryValue | null;
     location: FormDataEntryValue | null;
   }
@@ -81,7 +81,7 @@ export async function getAllPosts() {
   try {
     await connectToDatabase();
     const posts = await Post.find()
-      .populate({ path: "user", model: "User"  ,select:"_id avatar name"})
+      .populate({ path: "user", model: "User", select: "_id avatar name" })
       .sort({ createdAt: -1 });
     const response = {
       status: 200,
@@ -103,19 +103,20 @@ export async function getAllPosts() {
 export async function getPostById(postId: string) {
   try {
     await connectToDatabase();
-    const post = await Post.findById(postId).populate({
-      path:"user",
-      model:"User",
-      select:"_id avatar name"
-    }).populate({
-      path:"comments",
-      model:"Comment",
-      populate:{
-        path:'user',
-        select:"_id name avatar"
-      }
-      
-    })
+    const post = await Post.findById(postId)
+      .populate({
+        path: "user",
+        model: "User",
+        select: "_id avatar name",
+      })
+      .populate({
+        path: "comments",
+        model: "Comment",
+        populate: {
+          path: "user",
+          select: "_id name avatar",
+        },
+      });
     if (!post) {
       const response = {
         status: 400,
@@ -178,21 +179,21 @@ export async function deletePostById(postId: string, userId: string) {
       return JSON.parse(JSON.stringify(response));
     }
 
-    const res = await deleteImage(post.imageId)
-    const index = userExists.posts.indexOf(postId)
-    if(index!==-1){
-      userExists.posts.slice(index,1)
+    const res = await deleteImage(post.imageId);
+    const index = userExists.posts.indexOf(postId);
+    if (index !== -1) {
+      userExists.posts.slice(index, 1);
     }
     await userExists.save();
-    const del = await Post.deleteOne({_id:postId});
+    const del = await Post.deleteOne({ _id: postId });
 
     const response = {
       status: 200,
       message: "Post deleted successfully",
       data: del,
     };
-    revalidatePath('/')
-    revalidatePath('/profile')
+    revalidatePath("/");
+    revalidatePath("/profile");
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -290,7 +291,6 @@ export async function getPostByCaption(caption: string, page: number) {
   }
 }
 
-
 //create comment by post id with userid
 export async function createCommentByPostId(
   postId: string,
@@ -342,7 +342,7 @@ export async function createCommentByPostId(
       message: "Comment created successfully",
       data: post.comments,
     };
-    revalidatePath('/posts')
+    revalidatePath("/posts");
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -411,14 +411,14 @@ export async function deleteCommentByPostId(
       .indexOf(commentId);
     post.comments.splice(removeIndex, 1);
     await post.save();
-    const deleteComment = await Comment.deleteOne({_id:commentId});
+    const deleteComment = await Comment.deleteOne({ _id: commentId });
     await userExists.comments.remove(commentId);
     const response = {
       status: 200,
       message: "Comment deleted successfully",
       data: post.comments,
     };
-    revalidatePath('/post')
+    revalidatePath("/post");
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -462,23 +462,23 @@ export async function likePostByPostId(postId: string, userId: string) {
     }
 
     if (post.likes.includes(userId)) {
-      const index = post.likes.indexOf(userId)
-      if(index !==-1){
-        post.likes.splice(index,1)
+      const index = post.likes.indexOf(userId);
+      if (index !== -1) {
+        post.likes.splice(index, 1);
       }
-      const indexI = userExists.likes.indexOf(postId)
-      if(indexI !==-1){
-        userExists.likes.splice(index,1)
+      const indexI = userExists.likes.indexOf(postId);
+      if (indexI !== -1) {
+        userExists.likes.splice(index, 1);
       }
-      
+
       await post.save();
-      await userExists.save()
+      await userExists.save();
       const response = {
         status: 200,
         message: "Post unliked successfully",
         data: post.likes,
       };
-      revalidatePath('/')
+      revalidatePath("/");
       return JSON.parse(JSON.stringify(response));
     }
 
@@ -491,7 +491,7 @@ export async function likePostByPostId(postId: string, userId: string) {
       message: "Post liked successfully",
       data: post.likes,
     };
-    revalidatePath('/')
+    revalidatePath("/");
     return JSON.parse(JSON.stringify(response));
   } catch (error: any) {
     const response = {
@@ -501,5 +501,3 @@ export async function likePostByPostId(postId: string, userId: string) {
     return JSON.parse(JSON.stringify(response));
   }
 }
-
-

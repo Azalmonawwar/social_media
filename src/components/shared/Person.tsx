@@ -1,5 +1,6 @@
 'use client';
 
+import { createConversation } from "@/lib/actions/chat.action";
 import { useRouter } from "next/navigation";
 
 
@@ -8,12 +9,17 @@ interface Ifollower {
         _id: string;
         name: string;
         avatar: string;
+    },
+    user: {
+        _id: string
     }
 }
-const Person = ({ follower }: Ifollower) => {
+const Person = ({ follower, user }: Ifollower) => {
     const router = useRouter()
     const handleConversationCreate = async () => {
-        router.push(`/message/${follower._id}`)
+        const findOrCreateConversation = await createConversation({ userId: user, followingId: follower._id })
+        console.log(findOrCreateConversation)
+        router.push(`/message/${findOrCreateConversation.newConversation?._id}`);
     }
     return (
         <li key={follower._id} className='flex items-center gap-4 mb-5 bg-gray-800 p-2 rounded-md cursor-pointer' onClick={handleConversationCreate}>
