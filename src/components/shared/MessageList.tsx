@@ -5,7 +5,7 @@ import Person from './Person'
 
 const MessageList = async () => {
     const { data } = await getUserByToken()
-    const followers = await getFollowingAndFollowers(data._id);
+    const followers = await getFollowingAndFollowers(data?._id);
     return (
         <div className='w-[240px] mt-[80px] fixed'>
             <h2 className='text-2xl font-bold mb-2'>

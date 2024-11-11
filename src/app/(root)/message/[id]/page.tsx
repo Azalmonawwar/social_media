@@ -8,7 +8,7 @@ import React from 'react'
 const page = async ({ params }) => {
 
     const { data } = await getUserByToken();
-    const { conversations } = await getConversation(params.id)
+    const { conversations } = await getConversation(params.id);
     //messages from conversation 
 
 
